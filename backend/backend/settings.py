@@ -40,8 +40,12 @@ INSTALLED_APPS = [
 
     'rest_framework',
     'rest_framework_simplejwt',
+
     'users',
     # додали юзерів
+
+    'home',
+    # main menu
 ]
 
 #user maker
