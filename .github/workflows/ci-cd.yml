@@ -15,6 +15,7 @@ env:
   BRANCH: ci-cd
   PROJECT_DIR: /home/ubuntu/hakaton/SP-Hakaton
   WORK_DIR: /app
+
 jobs:
   lint-python:
     name: Python Linting and Formatting
@@ -81,6 +82,14 @@ jobs:
             cd $PROJECT_DIR
             echo "Pulling latest code..."
             git pull origin $BRANCH
+          EOF
+
+      - name: Rebuild and restart containers on server
+        run: |
+          ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
+            cd $PROJECT_DIR
+            echo "Rebuilding and restarting containers..."
+            docker compose up -d --build
           EOF
 
       - name: Install dependencies in container
