@@ -118,6 +118,41 @@ json
   "error": "Username already exists."
 }
 
+Зміна паролю в профілі
+PUT /api/auth/change-password/
+Цей ендпоінт дозволяє авторизованому користувачу змінити власний пароль, перебуваючи у своєму профілі (без надсилання email).
+
+Авторизований користувач (через access token)
+
+json
+{
+  "old_password": "current_password",
+  "new_password": "NewStrongPass123!"
+}
+
+new_password проходить через стандартну валідацію Django:
+
+Мінімум 8 символів
+
+Не повинен бути занадто простим або лише числовим
+
+200 OK (успішна зміна):
+
+json
+{
+  "message": "Password updated successfully"
+}
+400 Bad Request (невірний пароль або слабкий новий):
+
+json
+{
+  "new_password": [
+    "This password is too short. It must contain at least 8 characters.",
+    "This password is too common.",
+    "This password is entirely numeric."
+  ]
+}
+
 
 Запит на скидання пароля (відправлення email)
 URL: /api/auth/password/reset/
