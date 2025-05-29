@@ -1,11 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from .models import Book
-<<<<<<< HEAD
-import re
-=======
 
->>>>>>> 6dee463c5b8397beb92ff5cd5e90308ffd4d007b
 BASE_URL = "https://books.toscrape.com/catalogue/page-{}.html"
 BOOK_URL_PREFIX = "https://books.toscrape.com/catalogue/"
 
@@ -85,29 +81,3 @@ def scrape_all_books(max_pages=1, save_to_db=False):
         save_books_to_db(all_books)
 
     return all_books
-
-
-def clean_price(price_str):
-                    # Прибираємо всі символи, крім цифр, крапок і мінусів
-                    clean_str = re.sub(r'[^\d.-]', '', price_str)
-                    return float(clean_str)
-
-def save_books_to_db(books_list):
-    created = 0
-    for book_data in books_list:
-        price = clean_price(book_data["price"])  # очищаємо і конвертуємо ціну
-
-        book, created_flag = Book.objects.update_or_create(
-            title=book_data["title"],
-            defaults={
-                "price": price,
-                "availability": book_data["availability"],
-                "rating": book_data["rating"],
-                "genre": book_data.get("genre", ""),
-                "description": book_data.get("description", ""),
-            }
-        )
-        if created_flag:
-            created += 1
-    return created
-
