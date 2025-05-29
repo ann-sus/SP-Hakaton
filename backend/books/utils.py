@@ -1,7 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
 from .models import Book
+<<<<<<< HEAD
 import re
+=======
+
+>>>>>>> 6dee463c5b8397beb92ff5cd5e90308ffd4d007b
 BASE_URL = "https://books.toscrape.com/catalogue/page-{}.html"
 BOOK_URL_PREFIX = "https://books.toscrape.com/catalogue/"
 
@@ -43,7 +47,6 @@ def get_books_from_page(page_num):
         relative_url = book.h3.a['href']
         book_url = BOOK_URL_PREFIX + relative_url.replace('../../../', '')
 
-        # Отримуємо деталі з окремої сторінки книги
         details = get_book_details(book_url)
 
         books.append({
@@ -57,13 +60,30 @@ def get_books_from_page(page_num):
 
     return books
 
-def scrape_all_books(max_pages=1):
+def save_books_to_db(books):
+    for book_data in books:
+        Book.objects.update_or_create(
+            title=book_data['title'],
+            defaults={
+                'price': book_data['price'],
+                'availability': book_data['availability'],
+                'rating': book_data['rating'],
+                'genre': book_data['genre'],
+                'description': book_data['description'],
+            }
+        )
+
+def scrape_all_books(max_pages=1, save_to_db=False):
     all_books = []
     for page in range(1, max_pages + 1):
         books = get_books_from_page(page)
         if not books:
             break
         all_books.extend(books)
+
+    if save_to_db:
+        save_books_to_db(all_books)
+
     return all_books
 
 

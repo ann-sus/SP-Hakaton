@@ -1,23 +1,33 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+<<<<<<< HEAD
 from .utils import scrape_all_books  #ІМПОРТ
 import requests
 from bs4 import BeautifulSoup
 from rest_framework.permissions import IsAdminUser
 # books/views.py
+=======
+
+>>>>>>> 6dee463c5b8397beb92ff5cd5e90308ffd4d007b
 from rest_framework.viewsets import ModelViewSet
 from .models import Book
 from .serializers import BookSerializer
 from .permissions import IsAdminOrReadOnly
 
+from .utils import scrape_all_books
+
+
 class ScrapeBooksView(APIView):
     permission_classes = [IsAdminUser]
     def get(self, request):
         page_count = int(request.query_params.get('pages', 1))
+        save = request.query_params.get('save', 'false').lower() == 'true'
+
         if page_count < 1 or page_count > 10:
             return Response({"error": "Pages must be between 1 and 10"}, status=400)
 
+<<<<<<< HEAD
         books = scrape_all_books(page_count)
 
         # Отримати фільтри з query params
@@ -65,6 +75,11 @@ class ScrapeBooksView(APIView):
 
 
 
+=======
+        books = scrape_all_books(page_count, save_to_db=save)
+        return Response({"count": len(books), "books": books})
+
+>>>>>>> 6dee463c5b8397beb92ff5cd5e90308ffd4d007b
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
