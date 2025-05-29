@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - ci-cd
+      - main
   pull_request:
 
 env:
@@ -11,9 +12,13 @@ env:
   SSH_USER: ${{ secrets.SSH_USER }}
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   CONTAINER_NAME: sp-hakaton-backend-1
-  SQL_DUMP_LOCATION: "/tmp/backups/sql-backup.sql.gz"
   BRANCH: ci-cd
   PROJECT_DIR: /app
+  BACKUP_DIR: /app/backups
+  DAILY_BACKUP_DIR: /app/backups/daily
+  DB_USER: postgres
+  DB_NAME: app_db
+  BACKUP_RETENTION_DAYS: 7
 
 jobs:
   lint-python:
@@ -79,19 +84,33 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
-            echo 'Creating SQL dump...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py dumpdata --output=$SQL_DUMP_LOCATION
+            set -e
 
-            echo 'Pulling latest code...'
+            echo 'Створення каталогу для бекапів...'
+            mkdir -p $DAILY_BACKUP_DIR
+
+            BACKUP_FILE="backup-$(date +'%Y-%m-%d').sql.gz"
+            BACKUP_PATH="$DAILY_BACKUP_DIR/\$BACKUP_FILE"
+
+            echo 'Створення SQL дампу...'
+            docker exec $CONTAINER_NAME pg_dump -U $DB_USER $DB_NAME | gzip > "\$BACKUP_PATH"
+
+            echo 'Оновлення символічного посилання latest.sql.gz...'
+            ln -sf "\$BACKUP_PATH" $BACKUP_DIR/latest.sql.gz
+
+            echo "Видалення бекапів старших за $BACKUP_RETENTION_DAYS днів..."
+            find $DAILY_BACKUP_DIR -type f -name "*.sql.gz" -mtime +$BACKUP_RETENTION_DAYS -exec rm -f {} \;
+
+            echo 'Оновлення коду...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME git pull origin $BRANCH
 
-            echo 'Installing dependencies...'
+            echo 'Встановлення залежностей...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME pip install -r requirements.txt
 
-            echo 'Applying migrations...'
+            echo 'Застосування міграцій...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py migrate
 
-            echo 'Collecting static files...'
+            echo 'Збір статичних файлів...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
           EOF
 
@@ -109,16 +128,18 @@ jobs:
       - name: Rollback code and database
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
-            echo 'Rolling back code...'
+            set -e
+
+            echo 'Відкат коду...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME git fetch
             docker exec -w $PROJECT_DIR $CONTAINER_NAME git checkout ${{ github.event.before }}
 
-            echo 'Reinstalling dependencies...'
+            echo 'Встановлення залежностей...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME pip install -r requirements.txt
 
-            echo 'Restoring database from backup...'
-            docker exec -i $CONTAINER_NAME sh -c "gunzip -c $SQL_DUMP_LOCATION | psql -U <db_user> <db_name>"
+            echo 'Відновлення бази даних з останнього бекапу...'
+            gunzip -c $BACKUP_DIR/latest.sql.gz | docker exec -i $CONTAINER_NAME psql -U $DB_USER $DB_NAME
 
-            echo 'Collecting static files...'
+            echo 'Збір статичних файлів...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
           EOF

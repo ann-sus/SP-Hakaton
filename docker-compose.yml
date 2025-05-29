@@ -17,7 +17,7 @@ services:
     expose:
       - "${BACKEND_PORT}"
     volumes:
-      - /srv/db_backups:/app/db_backups
+      - ./backups:/app/backups
 
   frontend:
     build:
