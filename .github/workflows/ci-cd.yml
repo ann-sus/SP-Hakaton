@@ -10,7 +10,7 @@ env:
   REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
   SSH_USER: ${{ secrets.SSH_USER }}
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-  CONTAINER_NAME: django
+  CONTAINER_NAME: sp-hakaton-backend-1
   SQL_DUMP_LOCATION: "/tmp/backups/sql-backup.sql.gz"
   BRANCH: ci-cd
   PROJECT_DIR: /home/ubuntu/hakaton/SP-Hakaton
