@@ -1,12 +1,45 @@
 import AuthPanel from "../AuthPanel";
 import "./style.css";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 function LibraryHub() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const hideAuth = location.pathname === "/";
+  const [isAuth, setIsAuth] = useState(false);
+
+  useEffect(() => {
+    const auth = localStorage.getItem("isAuth") === "true";
+    setIsAuth(auth);
+  }, [location]);
+
+  const handleLogout = () => {
+    localStorage.setItem("isAuth", "false");
+    setIsAuth(false);
+    navigate("/");
+  };
+
   return (
     <div className="dark-theme-header-container">
-      <p className="header-title">BOOKshelf</p>
+      <Link to="/" className="header-title" style={{ textDecoration: "none" }}>
+        BOOKshelf
+      </Link>
       <div className="auth-controls-container">
-        <AuthPanel />
+        {!hideAuth && (
+          isAuth ? (
+            <>
+              <Link to="/profile" className="sign-in-button" style={{ textDecoration: "none", display: "block", textAlign: "center", lineHeight: "52px" }}>
+                Profile
+              </Link>
+              <button className="sign-in-button" style={{ marginLeft: 12 }} onClick={handleLogout}>
+                Logout
+              </button>
+            </>
+          ) : (
+            <AuthPanel />
+          )
+        )}
       </div>
     </div>
   );

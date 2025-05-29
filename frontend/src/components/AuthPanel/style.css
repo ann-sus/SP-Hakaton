@@ -45,7 +45,7 @@
   transition: background 0.2s, color 0.2s;
 }
 .sign-in-button:hover {
-  background: #333;
-  color: #fff;
+  background: #ffffff;
+  color: #000000;
   border-color: #fff;
 }
