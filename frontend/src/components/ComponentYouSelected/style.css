@@ -1,0 +1,19 @@
+.profile-section-container1 {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-width: 1440px;
+  padding-left: 9px;
+}
+.profile-section-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  min-width: 1023px;
+  padding-top: 52px;
+  padding-bottom: 555px;
+}

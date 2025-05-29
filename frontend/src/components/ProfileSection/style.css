@@ -1,0 +1,57 @@
+.profile-card-container {
+  margin-top: 100px;
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 25px 29px 36px;
+  background: linear-gradient(0deg, rgb(0, 0, 0), rgb(0, 0, 0)), #171717;
+  border: 1.5px solid #fff;
+  border-radius: 999px;
+}
+.profile-card {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 32.64%;
+  padding-right: 15px;
+}
+.vertical-centered-container {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  background: url("/assets/image_8834e5a3.png") 100% / cover no-repeat;
+}
+.vertical-centered-text-container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: center;
+  padding-top: 120px;
+  padding-bottom: 106px;
+}
+.mega-heading {
+  flex: 5 0 auto;
+  padding: 0;
+  margin: 0;
+  font: 500 128px/24px Roboto, sans-serif;
+  color: rgb(0, 0, 0);
+  text-align: center;
+  letter-spacing: 0.1px;
+}
+.profile-container {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: 67.36%;
+  padding: 5px 50px 11px 50px;
+}
+.profile-title {
+  padding: 0;
+  margin: 0;
+  font: 600 32px Inter, sans-serif;
+  color: rgb(255, 255, 255);
+}
