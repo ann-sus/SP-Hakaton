@@ -1,9 +1,8 @@
-import requests
-from bs4 import BeautifulSoup
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 
+from .utils import scrape_all_books  #ІМПОРТ
 
 class ScrapeBooksView(APIView):
     def get(self, request):
@@ -11,29 +10,5 @@ class ScrapeBooksView(APIView):
         if page_count < 1 or page_count > 10:
             return Response({"error": "Pages must be between 1 and 10"}, status=400)
 
-        books = self.scrape_books(page_count)
+        books = scrape_all_books(page_count)  #ВИКЛИК
         return Response({"count": len(books), "books": books})
-
-    def scrape_books(self, max_pages):
-        BASE_URL = "https://books.toscrape.com/catalogue/page-{}.html"
-        all_books = []
-
-        for page in range(1, max_pages + 1):
-            url = BASE_URL.format(page)
-            response = requests.get(url)
-            if response.status_code != 200:
-                continue
-
-            soup = BeautifulSoup(response.text, 'html.parser')
-            for book in soup.select("article.product_pod"):
-                title = book.h3.a['title']
-                price = book.select_one("p.price_color").text.strip()
-                availability = book.select_one("p.instock.availability").text.strip()
-
-                all_books.append({
-                    "title": title,
-                    "price": price,
-                    "availability": availability
-                })
-
-        return all_books
