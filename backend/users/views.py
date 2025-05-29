@@ -13,6 +13,8 @@ from rest_framework import status
 from rest_framework import generics, permissions, status
 from django.contrib.auth.password_validation import validate_password
 User = get_user_model()
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 class ProfileView(APIView):
     permission_classes = [IsAuthenticated]
@@ -115,3 +117,16 @@ class PasswordResetConfirmView(APIView):
         user.set_password(new_password)
         user.save()
         return Response({"message": "Password has been reset"}, status=status.HTTP_200_OK)
+
+
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        try:
+            refresh_token = request.data["refresh"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response({"detail": "Logged out successfully."}, status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
