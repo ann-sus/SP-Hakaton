@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - ci-cd
-      - main
   pull_request:
 
 env:
@@ -14,11 +13,15 @@ env:
   CONTAINER_NAME: sp-hakaton-backend-1
   BRANCH: ci-cd
   PROJECT_DIR: /app
+
+  # Шляхи на сервері (локальні, поза контейнером)
   BACKUP_DIR: /app/backups
   DAILY_BACKUP_DIR: /app/backups/daily
+  BACKUP_RETENTION_DAYS: 7
+
+  # Дані для БД
   DB_USER: postgres
   DB_NAME: app_db
-  BACKUP_RETENTION_DAYS: 7
 
 jobs:
   lint-python:
@@ -33,8 +36,7 @@ jobs:
           python-version: '3.10'
 
       - name: Install dependencies
-        run: |
-          pip install black
+        run: pip install black
         working-directory: ./backend
 
       - name: Run black (autoformat)
@@ -86,10 +88,7 @@ jobs:
           ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
             set -e
 
-            echo 'Створення каталогу для бекапів...'
-            mkdir -p $DAILY_BACKUP_DIR
-
-            BACKUP_FILE="backup-$(date +'%Y-%m-%d').sql.gz"
+            BACKUP_FILE="backup-\$(date +'%Y-%m-%d').sql.gz"
             BACKUP_PATH="$DAILY_BACKUP_DIR/\$BACKUP_FILE"
 
             echo 'Створення SQL дампу...'
@@ -137,8 +136,8 @@ jobs:
             echo 'Встановлення залежностей...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME pip install -r requirements.txt
 
-            echo 'Відновлення бази даних з останнього бекапу...'
-            gunzip -c $BACKUP_DIR/latest.sql.gz | docker exec -i $CONTAINER_NAME psql -U $DB_USER $DB_NAME
+            echo 'Відновлення бази даних з бекапу...'
+            docker exec -i $CONTAINER_NAME sh -c "gunzip -c $BACKUP_DIR/latest.sql.gz | psql -U $DB_USER $DB_NAME"
 
             echo 'Збір статичних файлів...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
