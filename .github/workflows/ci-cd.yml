@@ -13,7 +13,7 @@ env:
   CONTAINER_NAME: sp-hakaton-backend-1
   SQL_DUMP_LOCATION: "/tmp/backups/sql-backup.sql.gz"
   BRANCH: ci-cd
-  PROJECT_DIR: /home/ubuntu/hakaton/SP-Hakaton
+  PROJECT_DIR: /app
 
 jobs:
   lint-python:
