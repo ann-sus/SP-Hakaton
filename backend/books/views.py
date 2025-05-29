@@ -1,8 +1,12 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
 from .utils import scrape_all_books  #ІМПОРТ
+# books/views.py
+from rest_framework.viewsets import ModelViewSet
+from .models import Book
+from .serializers import BookSerializer
+from .permissions import IsAdminOrReadOnly
 
 class ScrapeBooksView(APIView):
     def get(self, request):
@@ -38,12 +42,6 @@ class ScrapeBooksView(APIView):
         return all_books
 
 
-# books/views.py
-
-from rest_framework.viewsets import ModelViewSet
-from .models import Book
-from .serializers import BookSerializer
-from .permissions import IsAdminOrReadOnly
 
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
