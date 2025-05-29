@@ -183,3 +183,93 @@ json
 Для тестування email скидання пароля використовується SMTP-сервер локальний (порт 1025), налаштований у Django (EMAIL_HOST = 'localhost').
 
 
+
+
+
+
+
+
+для книжок (Books) Базовий URL API /api/books/
+
+GET /api/books/
+
+Отримати список усіх книг.
+
+Відповідь:
+json
+[
+  {
+    "id": 1,
+    "title": "Book Title",
+    "price": "19.99",
+    "availability": "In stock",
+    "genre": "Fiction",
+    "publication_year": 2020,
+    "rating": "Four",
+    "description": "A great book"
+  },
+  ...
+]
+
+
+
+Деталі книги
+GET /api/books/{id}/
+Отримати дані конкретної книги.
+
+Відповідь:
+json
+[
+  {
+    "id": 1,
+    "title": "Book Title",
+    "price": "19.99",
+    "availability": "In stock",
+    "genre": "Fiction",
+    "publication_year": 2020,
+    "rating": "Four",
+    "description": "A great book"
+  }
+]
+
+........................................................................................................
+тільки для адміна це з токеном адмінського акаунту(JWT токен в заголовку Authorization: Bearer <token>).
+........................................................................................................
+
+Додати нову книгу (тільки для адміна)
+POST /api/books/
+Приклад запиту:
+
+json
+{
+  "title": "New Book",
+  "price": "9.99",
+  "availability": "In stock",
+  "genre": "Sci-Fi",
+  "publication_year": 2023,
+  "rating": "Five",
+  "description": "Exciting space adventure"
+}
+
+
+Оновити книгу (тільки для адміна)
+PUT /api/books/{id}/
+
+
+❌ Видалити книгу (тільки для адміна)
+DELETE /api/books/{id}/
+
+
+Спарсити книги з https://books.toscrape.com
+POST /api/books/scrape/
+Витягує книги з сайту та зберігає в базу (тільки для адміна)
+Відповідь:
+json
+{
+  "message": "Books scraped and saved successfully."
+}
+
+
+
+
+
