@@ -64,6 +64,41 @@ json
 }
 
 
+Вихід з акаунту (Logout)
+URL: /api/auth/logout/
+Метод: POST
+Цей ендпоінт дозволяє користувачу вийти з системи, відкликавши (заблокувавши) його refresh токен. Після виклику logout користувач більше не зможе використовувати цей refresh токен для отримання нових access токенів.
+
+Увага: Access токен, який був виданий до logout, залишається чинним до закінчення терміну дії.
+
+Authorization: Bearer <access_token> — обов’язковий. Access токен користувача.
+
+Content-Type: application/json
+Тіло запиту (Request Body)
+json
+{
+  "refresh": "<refresh_token>"
+}
+
+Успіх
+HTTP статус: 200 OK
+Тіло відповіді:
+
+json
+{
+  "detail": "Logged out successfully."
+}
+
+Помилки
+Статус	Опис	Причина
+401	Authentication credentials were not provided.	Відсутній або неправильний access токен в заголовку.
+400	Bad request	Некоректний або відсутній refresh токен у тілі запиту.
+401	Token is invalid or expired	Refresh токен недійсний або вже відкликаний.
+
+
+
+
+
 
 Отримати профіль користувача
 URL: /api/auth/profile/
