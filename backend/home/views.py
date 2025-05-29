@@ -12,5 +12,6 @@ class HomePageView(APIView):
                 "Реєстрація": "/api/auth/register/",
                 "Логін": "/api/auth/login/",
                 "Профіль": "/api/auth/profile/",
+                "API з книжками": "/api/books/"
             }
         })
