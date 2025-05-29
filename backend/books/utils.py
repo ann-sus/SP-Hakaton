@@ -1,60 +1,45 @@
 import requests
 from bs4 import BeautifulSoup
+from .models import Book
+import re
 
 BASE_URL = "https://books.toscrape.com/catalogue/page-{}.html"
 BOOK_URL_PREFIX = "https://books.toscrape.com/catalogue/"
 
 def get_book_details(book_url):
-    response = requests.get(book_url)
-    if response.status_code != 200:
-        return {}
+    resp = requests.get(book_url)
+    resp.encoding = 'utf-8'
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    desc_tag = soup.select_one("#product_description ~ p")
+    description = desc_tag.text.strip() if desc_tag else ""
+    crumbs = soup.select("ul.breadcrumb li > a")
+    genre = crumbs[-1].text.strip() if len(crumbs) >= 3 else ""
+    return {"description": description, "genre": genre}
 
-    soup = BeautifulSoup(response.text, 'html.parser')
-
-    description_tag = soup.select_one("#product_description ~ p")
-    description = description_tag.text.strip() if description_tag else "No description"
-
-    category_tag = soup.select("ul.breadcrumb li > a")
-    genre = category_tag[-1].text.strip() if len(category_tag) >= 3 else "Unknown"
-
-    return {
-        "description": description,
-        "genre": genre
-    }
-
-def get_books_from_page(page_num):
-    url = BASE_URL.format(page_num)
-    response = requests.get(url)
-    if response.status_code != 200:
+def get_books_from_page(page):
+    resp = requests.get(BASE_URL.format(page))
+    resp.encoding = 'utf-8'
+    if resp.status_code != 200:
         return []
-
-    soup = BeautifulSoup(response.text, 'html.parser')
-    books = []
-
-    for book in soup.select("article.product_pod"):
-        title = book.h3.a['title']
-        price = book.select_one("p.price_color").text.strip().replace('£', '')
-        availability = book.select_one("p.instock.availability").text.strip()
-
-        rating_class = book.p.get("class", [])
-        rating = next((cls for cls in rating_class if cls != "star-rating"), "No rating")
-
-        relative_url = book.h3.a['href']
-        book_url = BOOK_URL_PREFIX + relative_url.replace('../../../', '')
-
-        # Отримуємо деталі з окремої сторінки книги
-        details = get_book_details(book_url)
-
-        books.append({
+    soup = BeautifulSoup(resp.text, 'html.parser')
+    out = []
+    for b in soup.select("article.product_pod"):
+        title = b.h3.a['title']
+        raw_price = b.select_one("p.price_color").text
+        price = float(re.sub(r'[^\d.]', '', raw_price))
+        availability = b.select_one("p.instock.availability").text.strip()
+        cls = b.p.get("class", [])
+        rating = next((c for c in cls if c!="star-rating"), "")
+        rel = b.h3.a['href']
+        details = get_book_details(BOOK_URL_PREFIX + rel.replace('../../../',''))
+        out.append({
             "title": title,
             "price": price,
             "availability": availability,
             "rating": rating,
-            "genre": details.get("genre", "Unknown"),
-            "description": details.get("description", "No description"),
+            **details
         })
-
-    return books
+    return out
 
 def scrape_all_books(max_pages=1):
     all_books = []
@@ -64,3 +49,23 @@ def scrape_all_books(max_pages=1):
             break
         all_books.extend(books)
     return all_books
+
+
+def save_books_to_db(books_list):
+    created = updated = 0
+    for data in books_list:
+        obj, flag = Book.objects.update_or_create(
+            title=data["title"],
+            defaults={
+                "price": data["price"],
+                "availability": data["availability"],
+                "rating": data["rating"],
+                "genre": data.get("genre", ""),
+                "description": data.get("description", ""),
+            }
+        )
+        if flag:
+            created += 1
+        else:
+            updated += 1
+    return created, updated
