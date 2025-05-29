@@ -16,7 +16,7 @@ env:
 
   # Шляхи на сервері (локальні, поза контейнером)
   BACKUP_DIR: /app/backups
-  DAILY_BACKUP_DIR: /app/backups/daily
+  DAILY_BACKUP_DIR: /app/backups
   BACKUP_RETENTION_DAYS: 7
 
   # Дані для БД
