@@ -1,0 +1,95 @@
+.book-description-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  background: url('/public/assets/background_profile.png') no-repeat center center fixed;
+  background-size: cover;
+  color: #f5f5f5; /* Light text for better readability */
+  font-family: Arial, sans-serif;
+  min-height: calc(100vh - 100px); /* Ensure the content takes up the full height minus header/footer */
+  box-sizing: border-box;
+  padding-top: 160px; /* Increased padding to create more space from the top panel */
+}
+
+.book-description-header {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: flex-start; /* Align content to the left */
+  width: 80%; /* Center the content and limit width */
+  margin-bottom: 20px;
+  background: rgba(0, 0, 0, 0.6); /* Add a semi-transparent background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Stronger shadow for emphasis */
+  gap: 20px;
+}
+
+.book-description-cover {
+  width: 200px; /* Increase the size for better visibility */
+  height: 300px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Stronger shadow for emphasis */
+}
+
+.book-description-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: 600px; /* Limit the width of the text */
+}
+
+.book-description-title {
+  font-size: 32px; /* Increase the font size for the title */
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.book-description-author {
+  font-size: 20px;
+  color: #cccccc; /* Softer secondary text color */
+}
+
+.book-description-body {
+  max-width: 80%; /* Match the width of the header */
+  text-align: justify;
+  margin-top: 20px;
+  margin-bottom: 20px; /* Add spacing at the bottom */
+  background: rgba(0, 0, 0, 0.6); /* Add a semi-transparent background */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.book-description-summary {
+  margin-bottom: 20px;
+  line-height: 1.8; /* Improved line spacing */
+}
+
+.book-description-genres {
+  display: flex;
+  flex-direction: column;
+}
+
+.book-description-genres-title {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.book-description-genres-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.book-description-genre-chip {
+  background-color: #333; /* Darker chip background */
+  color: #f5f5f5; /* Light text for chips */
+  padding: 8px 12px;
+  margin: 5px;
+  border-radius: 5px;
+  font-size: 14px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle shadow for chips */
+}

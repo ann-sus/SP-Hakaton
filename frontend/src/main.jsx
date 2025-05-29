@@ -2,11 +2,11 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import ProfilePage from "./pages/ProfilePage";
-import LoginPage from "./pages/LoginPage";
-import SignUpPage from "./pages/SignUpPage";
-import ResetPassword from "./pages/ResetPassword";
 import WelcomePage from "./pages/WelcomePage";
+import LoginPage from "./pages/LoginPage";
+import ResetPassword from "./pages/ResetPassword";
+import MyBooksPage from "./pages/MyBooksPage";
+import BookDescription from "./pages/BookDescription";
 
 import "./global.css"
 import LibraryHub from "./components/LibraryHub";
@@ -22,10 +22,23 @@ root.render(
       <LibraryHub />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/" element={<WelcomePage />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/books" element={<MyBooksPage />} />
+        <Route
+          path="/book/:id"
+          element={
+            <BookDescription
+              book={{
+                title: "Sample Book",
+                author: "John Doe",
+                coverUrl: "https://via.placeholder.com/150",
+                summary: "This is a sample summary of the book. It provides an overview of the story, characters, and key themes. The book explores the journey of the protagonist through various challenges and adventures, making it a compelling read for fans of the genre.",
+                genres: ["Fiction", "Adventure", "Mystery"]
+              }}
+            />
+          }
+        />
       </Routes>
       <Footer />
     </div>
