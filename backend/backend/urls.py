@@ -25,5 +25,6 @@ urlpatterns = [
     path('', include('home.urls')),  # Нова головна сторінка з додатку home
     path('api/books/', include('books.urls')),
 
+
 ]
 
