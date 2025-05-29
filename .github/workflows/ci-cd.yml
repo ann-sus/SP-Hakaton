@@ -11,7 +11,6 @@ env:
   SSH_USER: ${{ secrets.SSH_USER }}
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   CONTAINER_NAME: django
-  #PROJECT_DIR: /home/ubuntu/hakaton/SP-Hakaton
   SQL_DUMP_LOCATION: "/tmp/backups/sql-backup.sql.gz"
   BRANCH: ci-cd
 
@@ -30,12 +29,15 @@ jobs:
       - name: Install dependencies
         run: |
           pip install black flake8
+        working-directory: ./backend
 
       - name: Run black (check formatting)
         run: black --check .
+        working-directory: ./backend
 
       - name: Run flake8 (style issues)
         run: flake8 .
+        working-directory: ./backend
 
   lint-js:
     name: JavaScript Linting
@@ -48,10 +50,13 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install ESLint
-        run: |
-          npm install
-          npx eslint . --ext .js,.jsx || true
+      - name: Install frontend dependencies
+        run: npm install
+        working-directory: ./frontend
+
+      - name: Run ESLint
+        run: npx eslint . --ext .js,.jsx || true
+        working-directory: ./frontend
 
   deploy:
     name: Deploy
@@ -70,22 +75,23 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
+            PROJECT_DIR="/home/ubuntu/hakaton/SP-Hakaton"
+
             echo 'Creating SQL dump...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py dumpdata --output=$SQL_DUMP_LOCATION
+            docker exec -w \$PROJECT_DIR $CONTAINER_NAME python manage.py dumpdata --output=$SQL_DUMP_LOCATION
 
             echo 'Pulling latest code...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME git pull origin $BRANCH
+            docker exec -w \$PROJECT_DIR $CONTAINER_NAME git pull origin $BRANCH
 
             echo 'Installing dependencies...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME pip install -r requirements.txt
+            docker exec -w \$PROJECT_DIR $CONTAINER_NAME pip install -r requirements.txt
 
             echo 'Applying migrations...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py migrate
+            docker exec -w \$PROJECT_DIR $CONTAINER_NAME python manage.py migrate
 
             echo 'Collecting static files...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
+            docker exec -w \$PROJECT_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
           EOF
-
 
   rollback:
     name: Rollback
@@ -101,16 +107,18 @@ jobs:
       - name: Rollback code and database
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
+            PROJECT_DIR="/home/ubuntu/hakaton/SP-Hakaton"
+
             echo 'Rolling back code...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME git fetch
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME git checkout ${{ github.event.before }}
+            docker exec -w \$PROJECT_DIR $CONTAINER_NAME git fetch
+            docker exec -w \$PROJECT_DIR $CONTAINER_NAME git checkout ${{ github.event.before }}
 
             echo 'Reinstalling dependencies...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME pip install -r requirements.txt
+            docker exec -w \$PROJECT_DIR $CONTAINER_NAME pip install -r requirements.txt
 
             echo 'Restoring database from backup...'
             docker exec -i $CONTAINER_NAME sh -c "gunzip -c $SQL_DUMP_LOCATION | psql -U <db_user> <db_name>"
 
             echo 'Collecting static files...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
+            docker exec -w \$PROJECT_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
           EOF
