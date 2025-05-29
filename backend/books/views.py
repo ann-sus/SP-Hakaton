@@ -38,10 +38,6 @@ class ScrapeBooksView(APIView):
         return all_books
 
 
-
-
-
-
 # books/views.py
 
 from rest_framework.viewsets import ModelViewSet
