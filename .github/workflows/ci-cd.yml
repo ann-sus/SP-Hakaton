@@ -1,0 +1,114 @@
+name: CI/CD Django
+
+on:
+  push:
+    branches:
+      - ci-cd
+      - main
+  pull_request:
+
+env:
+  REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
+  SSH_USER: ${{ secrets.SSH_USER }}
+  SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+  CONTAINER_NAME: sp-hakaton-backend-1
+  BRANCH: ci-cd
+  PROJECT_DIR: /home/ubuntu/hakaton/SP-Hakaton
+  WORK_DIR: /app
+
+jobs:
+  lint-python:
+    name: Python Linting and Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: pip install black
+        working-directory: ./backend
+
+      - name: Run black (autoformat)
+        run: black .
+        working-directory: ./backend
+
+  lint-js:
+    name: JavaScript Linting and Formatting
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install ESLint v8 and create config
+        run: |
+          npm install eslint@8 --save-dev
+          echo '{
+            "env": { "browser": true, "es2021": true },
+            "extends": "eslint:recommended",
+            "parserOptions": { "ecmaVersion": 12, "sourceType": "module" },
+            "rules": {}
+          }' > .eslintrc.json
+        working-directory: ./frontend
+
+      - name: Run ESLint (auto fix)
+        run: npx eslint . --ext .js,.jsx --fix || true
+        working-directory: ./frontend
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [lint-python, lint-js]
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ci-cd'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.8.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Pull latest code on server (outside container)
+        run: |
+          ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
+            cd $PROJECT_DIR
+            echo "Pulling latest code..."
+            git pull origin $BRANCH
+          EOF
+
+      - name: Rebuild and restart containers on server
+        run: |
+          ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
+            cd $PROJECT_DIR
+            echo "Rebuilding and restarting containers..."
+            docker compose up -d --build
+          EOF
+
+      - name: Install dependencies in container
+        run: |
+          ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
+            echo "Installing dependencies in container..."
+            docker exec -w $WORK_DIR $CONTAINER_NAME pip install -r requirements.txt
+          EOF
+
+      - name: Apply migrations in container
+        run: |
+          ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
+            echo "Applying migrations in container..."
+            docker exec -w $WORK_DIR $CONTAINER_NAME python manage.py migrate
+          EOF
+
+      - name: Collect static files in container
+        run: |
+          ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
+            echo "Collecting static files in container..."
+            docker exec -w $WORK_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
+          EOF
