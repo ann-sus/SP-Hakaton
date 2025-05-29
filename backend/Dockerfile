@@ -1,20 +1,13 @@
-# Вибираємо базовий образ Python
 FROM python:3.11-slim
 
-# Встановлюємо робочу директорію
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+
 WORKDIR /app
 
-# Копіюємо файли залежностей (requirements.txt)
-COPY requirements.txt .
+COPY requirements.txt /app/
+RUN pip install --upgrade pip && pip install -r requirements.txt
 
-# Встановлюємо залежності
-RUN pip install --no-cache-dir -r requirements.txt
+COPY . /app/
 
-# Копіюємо весь код проєкту
-COPY . .
-
-# Виставляємо порт (Django зазвичай 8000)
-EXPOSE 8000
-
-# Команда запуску сервера Django
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["gunicorn", "backend.wsgi:application", "--bind", "0.0.0.0:8000"]
