@@ -14,15 +14,35 @@ function LibraryHub() {
     setIsAuth(auth);
   }, [location]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const access = localStorage.getItem("access");
+    const refresh = localStorage.getItem("refresh");
+    try {
+      await fetch("http://127.0.0.1:8000/api/auth/logout/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${access}`
+        },
+        body: JSON.stringify({ refresh })
+      });
+    } catch (e) {
+      // optionally handle error
+    }
     localStorage.setItem("isAuth", "false");
+    localStorage.removeItem("access");
+    localStorage.removeItem("refresh");
     setIsAuth(false);
     navigate("/");
   };
 
   return (
     <div className="dark-theme-header-container">
-      <Link to="/" className="header-title" style={{ textDecoration: "none" }}>
+      <Link
+        to={isAuth ? "/books" : "/"}
+        className="header-title"
+        style={{ textDecoration: "none" }}
+      >
         BOOKshelf
       </Link>
       <div className="auth-controls-container">

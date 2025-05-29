@@ -41,8 +41,8 @@
 
 }
 .welcome-link:hover {
-  background: #ffffff;
-  color: #000000;
+  background: #171717;
+  color: #ffffff;
 }
 .welcome-link.signup:hover {
   background: #ffffff;

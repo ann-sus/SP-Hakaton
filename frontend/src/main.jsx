@@ -30,7 +30,7 @@ root.render(
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/" element={<WelcomePage />} />
         <Route path="/books" element={<MyBooksPage />} />
-        <Route path="/books/id" element={<BookDescription />} />
+        <Route path="/books/:id" element={<BookDescription />} />
         <Route path="/admin" element={<AdminPage />} />
         
       </Routes>

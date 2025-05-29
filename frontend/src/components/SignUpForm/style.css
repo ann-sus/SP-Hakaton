@@ -26,7 +26,7 @@
   outline: none;
 }
 .signup-input:focus {
-  border: 1.5px solid #1976d2;
+  border: 1.5px solid #ffffff;
 }
 .signup-submit {
   margin-top: 12px;
@@ -40,6 +40,6 @@
   transition: background 0.2s, color 0.2s;
 }
 .signup-submit:hover {
-  background: #1976d2;
+  background: #171717;
   color: #fff;
 }

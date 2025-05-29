@@ -36,8 +36,8 @@ function ResetForm() {
         {sent ? "Інструкція надіслана" : "Скинути пароль"}
       </button>
       <button
-        className="login-submit"
-        style={{ background: '#1976d2', color: '#fff', marginTop: 0 }}
+        className="login-submit back-btn"
+        style={{ background: '#000000', color: '#fff', marginTop: 0 }}
         onClick={() => window.location.href = "/login"}
         type="button"
       >
