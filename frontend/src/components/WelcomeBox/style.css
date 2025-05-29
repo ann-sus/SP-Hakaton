@@ -1,0 +1,50 @@
+/* WelcomeBox styles */
+.welcome-box {
+  background: rgb(0, 0, 0);
+  border-radius: 16px;
+  padding: 48px 32px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+  max-width: 480px;
+  text-align: center;
+  margin-top: 200px;
+  margin-bottom: 100px;
+}
+.welcome-title {
+  color: #fff;
+  font-size: 40px;
+  margin-bottom: 24px;
+}
+.welcome-desc {
+  color: #fff;
+  font-size: 20px;
+  margin-bottom: 32px;
+}
+.welcome-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+.welcome-link {
+  background: #fff;
+  color: #171717;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 18px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+}
+.welcome-link.signup {
+  background: #000000;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+
+}
+.welcome-link:hover {
+  background: #ffffff;
+  color: #000000;
+}
+.welcome-link.signup:hover {
+  background: #ffffff;
+  color: #000000;
+}

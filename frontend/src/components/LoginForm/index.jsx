@@ -1,17 +1,30 @@
 import { useState } from "react";
 import "./style.css";
+import { useNavigate } from "react-router-dom";
+
+// Тестовий словник логінів і паролів
+const USERS = {
+  "user1": "password1",
+  "user2": "password2"
+};
 
 function LoginForm({ onSubmit }) {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (onSubmit) {
-      onSubmit({ login, password });
+    if (USERS[login] && USERS[login] === password) {
+      localStorage.setItem("isAuth", "true");
+      setError("");
+      if (onSubmit) {
+        onSubmit({ login, password });
+      }
     } else {
-      // TODO: handle login logic
-      alert(`Login: ${login}\nPassword: ${password}`);
+      setError("Невірний логін або пароль");
+      localStorage.setItem("isAuth", "false");
     }
   };
 
@@ -37,7 +50,17 @@ function LoginForm({ onSubmit }) {
         placeholder="Введіть пароль"
         autoComplete="current-password"
       />
+      {error && <div style={{ color: "red", marginBottom: 8 }}>{error}</div>}
       <button className="login-submit" type="submit">Увійти</button>
+      <div style={{ textAlign: "right", marginTop: 8 }}>
+        <button
+          type="button"
+          style={{ background: "none", border: "none", color: "#1976d2", cursor: "pointer", font: "500 16px Inter, sans-serif", padding: 0 }}
+          onClick={() => navigate("/reset-password")}
+        >
+          Забули пароль?
+        </button>
+      </div>
     </form>
   );
 }

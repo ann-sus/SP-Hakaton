@@ -6,6 +6,7 @@ import ProfilePage from "./pages/ProfilePage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import ResetPassword from "./pages/ResetPassword";
+import WelcomePage from "./pages/WelcomePage";
 
 import "./global.css"
 import LibraryHub from "./components/LibraryHub";
@@ -24,6 +25,7 @@ root.render(
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/" element={<WelcomePage />} />
       </Routes>
       <Footer />
     </div>
