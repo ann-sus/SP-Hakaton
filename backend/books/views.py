@@ -37,3 +37,20 @@ class ScrapeBooksView(APIView):
                 })
 
         return all_books
+
+
+
+
+
+
+# books/views.py
+
+from rest_framework.viewsets import ModelViewSet
+from .models import Book
+from .serializers import BookSerializer
+from .permissions import IsAdminOrReadOnly
+
+class BookViewSet(ModelViewSet):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [IsAdminOrReadOnly]
