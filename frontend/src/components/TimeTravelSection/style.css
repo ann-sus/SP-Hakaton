@@ -1,0 +1,14 @@
+.time-location-container {
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding-right: 12.5px;
+  padding-left: 12px;
+  margin-top: 926px;
+}
+.border-divider {
+  flex: 0 0 auto;
+  border-top: 1px solid #e6e6e6;
+}

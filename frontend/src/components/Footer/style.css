@@ -1,0 +1,42 @@
+/* Footer styles, reusing city-info-container styles */
+.city-info-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-end;
+  width: 100%;
+  min-height: 120px;
+  padding: 32px 40px;
+  background: #000000;
+  color: #ffffff;
+  box-shadow: 0 2px 24px rgba(0,0,0,0.12);
+}
+
+.city-date-heading {
+  flex: 0 0 auto;
+  margin: 0;
+  font: 400 24px Inter, sans-serif;
+  color: white;
+}
+.city-info-container1 {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-top: 88px;
+}
+.card-container {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+}
+

@@ -1,0 +1,27 @@
+.flex-container-with-sv-gs {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-top: 88px;
+}
+.card-container {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+}
+.svg-container {
+  display: flex;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  color: #828282;
+}

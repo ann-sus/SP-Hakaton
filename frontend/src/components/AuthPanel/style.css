@@ -1,0 +1,51 @@
+.auth-controls-container1 {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  gap: 48px;
+  align-items: center;
+  justify-content: flex-end;
+}
+.sign-in-text-styles {
+  flex: 0 0 auto;
+  padding: 0;
+  margin: 0;
+  font: 500 20px Inter, sans-serif;
+  color: white;
+}
+.signup-button {
+  box-sizing: border-box;
+  display: block;
+  flex: 0 0 auto;
+  width: 108px;
+  min-width: 108px;
+  height: 52px;
+  font: 800 16px Inter, sans-serif;
+  color: #171717;
+  cursor: pointer;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+}
+.sign-in-button {
+  box-sizing: border-box;
+  display: block;
+  flex: 0 0 auto;
+  width: 108px;
+  min-width: 108px;
+  height: 52px;
+  font: 800 16px Inter, sans-serif;
+  color: #fff;
+  cursor: pointer;
+  background: #171717;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.05);
+  transition: background 0.2s, color 0.2s;
+}
+.sign-in-button:hover {
+  background: #333;
+  color: #fff;
+  border-color: #fff;
+}
