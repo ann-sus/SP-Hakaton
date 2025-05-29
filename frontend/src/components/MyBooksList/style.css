@@ -1,0 +1,117 @@
+/* Стилі для сторінки "Мої книги" у стилі як інші сторінки */
+.my-books-container {
+  background: rgba(0,0,0,0.85);
+  border-radius: 16px;
+  padding: 32px 32px 24px 32px;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+  margin-bottom: 48px;
+  margin-top: 60px; /* опускаємо бокс нижче */
+}
+.my-books-title {
+  color: #fff;
+  font: 600 32px Roboto, Arial, sans-serif;
+  margin-bottom: 32px;
+  text-align: left;
+}
+.my-books-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: flex-start;
+}
+.my-books-row-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  padding-bottom: 18px; /* щоб скрол торкався фігур */
+  margin-bottom: -18px; /* скрол ближче до фігур */
+}
+.my-books-row {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  justify-content: flex-start;
+  width: max-content;
+  min-width: 100%;
+  margin-bottom: 0;
+  scrollbar-color: #111 #222;
+  scrollbar-width: thin;
+}
+.my-books-row-wrapper::-webkit-scrollbar {
+  height: 12px;
+  background: #111;
+  border-radius: 8px;
+}
+.my-books-row-wrapper::-webkit-scrollbar-thumb {
+  background: #222;
+  border-radius: 8px;
+}
+.my-books-row-wrapper::-webkit-scrollbar-track {
+  background: #111;
+  border-radius: 8px;
+}
+.my-book-card {
+  background: #171717;
+  border-radius: 12px;
+  width: 180px;
+  min-width: 180px;
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  transition: transform 0.15s;
+  flex-shrink: 0;
+}
+.my-book-card:hover {
+  transform: translateY(-6px) scale(1.03);
+}
+.my-book-cover {
+  width: 140px;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  border-radius: 8px;
+  margin-top: 18px;
+  margin-bottom: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.my-book-info {
+  color: #fff;
+  text-align: center;
+  margin-bottom: 12px;
+}
+.my-book-title {
+  font: 500 18px Roboto, Arial, sans-serif;
+  margin-bottom: 6px;
+}
+.my-book-author {
+  font: 400 15px Roboto, Arial, sans-serif;
+  color: #bdbdbd;
+}
+.my-genres-section {
+  margin-top: 32px;
+}
+.my-genres-title {
+  color: #fff;
+  font: 500 22px Roboto, Arial, sans-serif;
+  margin-bottom: 18px;
+}
+.my-genres-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.my-genre-chip {
+  background: #232323;
+  color: #fff;
+  border-radius: 20px;
+  padding: 10px 28px;
+  font: 500 16px Roboto, Arial, sans-serif;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  transition: background 0.2s;
+}
+.my-genre-chip:hover {
+  background: #1976d2;
+}
