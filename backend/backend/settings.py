@@ -46,6 +46,9 @@ INSTALLED_APPS = [
 
     'home',
     # main menu
+
+    'books',
+    # books app
 ]
 
 #user maker
