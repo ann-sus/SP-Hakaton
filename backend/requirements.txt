@@ -5,5 +5,8 @@ gunicorn
 psycopg2-binary
 bs4
 requests
+
 pymemcache
+
+django-cors-headers
 

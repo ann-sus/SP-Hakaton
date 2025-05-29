@@ -28,7 +28,7 @@
 }
 
 .login-input:focus {
-  border: 1.5px solid #1976d2;
+  border: 1.5px solid #ffffff;
 }
 
 .login-submit {
@@ -44,7 +44,12 @@
 }
 
 .login-submit:hover {
-  background: #1976d2;
+  background: #171717;
+  color: #fff;
+}
+
+.login-submit.back-btn:hover {
+  background: #444;
   color: #fff;
 }
 

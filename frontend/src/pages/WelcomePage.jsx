@@ -6,7 +6,6 @@ function WelcomePage() {
     <div
       style={{
         minHeight: "100vh",
-        width: "100vw",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",

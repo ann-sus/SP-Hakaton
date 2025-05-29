@@ -2,11 +2,7 @@ import { useState } from "react";
 import "./style.css";
 import { useNavigate } from "react-router-dom";
 
-// Тестовий словник логінів і паролів
-const USERS = {
-  "user1": "password1",
-  "user2": "password2"
-};
+
 
 function LoginForm({ onSubmit }) {
   const [login, setLogin] = useState("");
@@ -14,16 +10,35 @@ function LoginForm({ onSubmit }) {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (USERS[login] && USERS[login] === password) {
-      localStorage.setItem("isAuth", "true");
-      setError("");
-      if (onSubmit) {
-        onSubmit({ login, password });
+    setError("");
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/login/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: login,
+          password: password
+        })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("access", data.access);
+        localStorage.setItem("refresh", data.refresh);
+        localStorage.setItem("isAuth", "true");
+        if (onSubmit) {
+          onSubmit({ login, password });
+        }
+      } else {
+        const err = await response.json();
+        setError(err.detail || "Невірний логін або пароль");
+        localStorage.setItem("isAuth", "false");
       }
-    } else {
-      setError("Невірний логін або пароль");
+    } catch (e) {
+      setError("Помилка з'єднання з сервером");
       localStorage.setItem("isAuth", "false");
     }
   };
@@ -55,7 +70,7 @@ function LoginForm({ onSubmit }) {
       <div style={{ textAlign: "right", marginTop: 8 }}>
         <button
           type="button"
-          style={{ background: "none", border: "none", color: "#1976d2", cursor: "pointer", font: "500 16px Inter, sans-serif", padding: 0 }}
+          style={{ background: "none", border: "none", color: "#ffffff", cursor: "pointer", font: "500 16px Inter, sans-serif", padding: 0 }}
           onClick={() => navigate("/reset-password")}
         >
           Забули пароль?

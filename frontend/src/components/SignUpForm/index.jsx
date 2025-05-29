@@ -1,10 +1,11 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./style.css";
 
 function SignUpForm() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -16,41 +17,50 @@ function SignUpForm() {
     setError("");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (form.password !== form.confirmPassword) {
       setError("Паролі не співпадають");
       return;
     }
-    // Тут можна додати логіку відправки даних на сервер
-    alert("Реєстрація успішна!");
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/register/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          username: form.username,
+          email: form.email,
+          password: form.password
+        })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert("Реєстрація успішна!");
+        setForm({ username: "", email: "", password: "", confirmPassword: "" });
+        navigate("/login");
+      } else {
+        setError(data.error || "Сталася помилка при реєстрації");
+      }
+    } catch (err) {
+      setError("Помилка з'єднання з сервером");
+    }
   };
 
   return (
     <form className="signup-form" onSubmit={handleSubmit}>
-      <label htmlFor="signup-firstname" className="signup-label">Ім'я</label>
+      <label htmlFor="signup-username" className="signup-label">Ім'я користувача</label>
       <input
-        id="signup-firstname"
+        id="signup-username"
         className="signup-input"
         type="text"
-        name="firstName"
-        value={form.firstName}
+        name="username"
+        value={form.username}
         onChange={handleChange}
-        placeholder="Введіть ім'я"
+        placeholder="Введіть ім'я користувача"
         required
-        autoComplete="given-name"
-      />
-      <label htmlFor="signup-lastname" className="signup-label">Прізвище</label>
-      <input
-        id="signup-lastname"
-        className="signup-input"
-        type="text"
-        name="lastName"
-        value={form.lastName}
-        onChange={handleChange}
-        placeholder="Введіть прізвище"
-        required
-        autoComplete="family-name"
+        autoComplete="username"
       />
       <label htmlFor="signup-email" className="signup-label">Email</label>
       <input
