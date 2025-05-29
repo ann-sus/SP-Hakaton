@@ -3,3 +3,5 @@ djangorestframework
 djangorestframework-simplejwt
 gunicorn
 psycopg2-binary
+bs4
+requests
