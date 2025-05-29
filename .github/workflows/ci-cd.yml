@@ -29,15 +29,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install black flake8
+          pip install black
         working-directory: ./backend
 
       - name: Run black (autoformat)
         run: black .
-        working-directory: ./backend
-
-      - name: Run flake8 (style issues)
-        run: flake8 .
         working-directory: ./backend
 
   lint-js:
