@@ -14,7 +14,7 @@ env:
   CONTAINER_NAME: sp-hakaton-backend-1
   BRANCH: ci-cd
   PROJECT_DIR: /home/ubuntu/hakaton/SP-Hakaton
-
+  WORK_DIR: /app
 jobs:
   lint-python:
     name: Python Linting and Formatting
@@ -87,19 +87,19 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
             echo "Installing dependencies in container..."
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME pip install -r requirements.txt
+            docker exec -w $WORK_DIR $CONTAINER_NAME pip install -r requirements.txt
           EOF
 
       - name: Apply migrations in container
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
             echo "Applying migrations in container..."
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py migrate
+            docker exec -w $WORK_DIR $CONTAINER_NAME python manage.py migrate
           EOF
 
       - name: Collect static files in container
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
             echo "Collecting static files in container..."
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
+            docker exec -w $WORK_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
           EOF
