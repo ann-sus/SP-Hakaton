@@ -3,8 +3,8 @@ name: CI/CD Django
 on:
   push:
     branches:
-      - main
       - ci-cd
+      - main
   pull_request:
 
 env:
@@ -12,7 +12,7 @@ env:
   SSH_USER: ${{ secrets.SSH_USER }}
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   CONTAINER_NAME: sp-hakaton-backend-1
-  BRANCH: ${{ github.ref_name }}
+  BRANCH: ci-cd
   PROJECT_DIR: /app
 
 jobs:
@@ -46,7 +46,7 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install ESLint and create config
+      - name: Install ESLint v8 and create config
         run: |
           npm install eslint@8 --save-dev
           echo '{
@@ -78,15 +78,16 @@ jobs:
       - name: Deploy via SSH
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$REMOTE_HOST << EOF
-            echo 'Pulling latest code...'
-            docker exec -w $PROJECT_DIR $CONTAINER_NAME git pull origin $BRANCH
+            echo 'Pulling latest code on host (поза контейнером)...'
+            cd $PROJECT_DIR
+            git pull origin $BRANCH
 
-            echo 'Installing dependencies...'
+            echo 'Installing dependencies у контейнері...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME pip install -r requirements.txt
 
-            echo 'Applying migrations...'
+            echo 'Застосування міграцій...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py migrate
 
-            echo 'Collecting static files...'
+            echo 'Збір статичних файлів...'
             docker exec -w $PROJECT_DIR $CONTAINER_NAME python manage.py collectstatic --noinput
           EOF
