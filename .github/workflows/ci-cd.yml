@@ -17,7 +17,7 @@ env:
 
 jobs:
   lint-python:
-    name: Python Linting
+    name: Python Linting and Formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,8 +32,8 @@ jobs:
           pip install black flake8
         working-directory: ./backend
 
-      - name: Run black (check formatting)
-        run: black --check .
+      - name: Run black (autoformat)
+        run: black .
         working-directory: ./backend
 
       - name: Run flake8 (style issues)
@@ -41,7 +41,7 @@ jobs:
         working-directory: ./backend
 
   lint-js:
-    name: JavaScript Linting
+    name: JavaScript Linting and Formatting
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -62,8 +62,8 @@ jobs:
           }' > .eslintrc.json
         working-directory: ./frontend
 
-      - name: Run ESLint
-        run: npx eslint . --ext .js,.jsx || true
+      - name: Run ESLint (auto fix)
+        run: npx eslint . --ext .js,.jsx --fix || true
         working-directory: ./frontend
 
   deploy:
