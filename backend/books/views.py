@@ -1,26 +1,39 @@
-from rest_framework import viewsets, permissions
-from .models import Book
-from .serializers import BookSerializer
+import requests
+from bs4 import BeautifulSoup
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from books.utils import scrape_all_books
 
-class IsAdminOrReadOnly(permissions.BasePermission):
-    def has_permission(self, request, view):
-        # Адміністратор має повний доступ, інші — тільки читання
-        if request.method in permissions.SAFE_METHODS:
-            return True
-        return request.user and request.user.is_staff
-
-class BookViewSet(viewsets.ModelViewSet):
-    queryset = Book.objects.all()
-    serializer_class = BookSerializer
-    permission_classes = [IsAdminOrReadOnly]
 
 class ScrapeBooksView(APIView):
     def get(self, request):
-        pages = int(request.query_params.get('pages', 1))
-        pages = max(1, min(pages, 10))  # обмеження 1–10
-        books = scrape_all_books(pages)
-        return Response({"count": len(books), "books": books}, status=status.HTTP_200_OK)
+        page_count = int(request.query_params.get('pages', 1))
+        if page_count < 1 or page_count > 10:
+            return Response({"error": "Pages must be between 1 and 10"}, status=400)
+
+        books = self.scrape_books(page_count)
+        return Response({"count": len(books), "books": books})
+
+    def scrape_books(self, max_pages):
+        BASE_URL = "https://books.toscrape.com/catalogue/page-{}.html"
+        all_books = []
+
+        for page in range(1, max_pages + 1):
+            url = BASE_URL.format(page)
+            response = requests.get(url)
+            if response.status_code != 200:
+                continue
+
+            soup = BeautifulSoup(response.text, 'html.parser')
+            for book in soup.select("article.product_pod"):
+                title = book.h3.a['title']
+                price = book.select_one("p.price_color").text.strip()
+                availability = book.select_one("p.instock.availability").text.strip()
+
+                all_books.append({
+                    "title": title,
+                    "price": price,
+                    "availability": availability
+                })
+
+        return all_books
