@@ -78,7 +78,7 @@ function LibraryHub() {
               {isAdmin && (
                 <button className="sign-in-button" onClick={() => navigate("/admin")}>Адмін</button>
               )}
-              <Link to="/profile" className="sign-in-button" style={{ textDecoration: "none", display: "block", textAlign: "center", lineHeight: "52px" }}>
+              <Link to="/profile" className="sign-in-button" style={{ textDecoration: "none" }}>
                 Профіль
               </Link>
               <button className="sign-in-button" onClick={handleLogout}>
