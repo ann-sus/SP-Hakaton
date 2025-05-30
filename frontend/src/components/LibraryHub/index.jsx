@@ -18,7 +18,7 @@ function LibraryHub() {
     const access = localStorage.getItem("access");
     const refresh = localStorage.getItem("refresh");
     try {
-      await fetch("http://127.0.0.1:8000/api/auth/logout/", {
+      await fetch("${process.env.REACT_APP_API_SERVER}/api/auth/logout/", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

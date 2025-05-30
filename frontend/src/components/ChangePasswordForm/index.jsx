@@ -18,7 +18,7 @@ const ChangePasswordForm = ({ onChangePassword }) => {
     }
     const token = localStorage.getItem("access");
     try {
-      const response = await fetch("http://127.0.0.1:8000/api/auth/change-password/", {
+      const response = await fetch("${process.env.REACT_APP_API_SERVER}/api/auth/change-password/", {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
