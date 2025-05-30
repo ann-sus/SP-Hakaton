@@ -18,7 +18,7 @@ function LibraryHub() {
     const access = localStorage.getItem("access");
     const refresh = localStorage.getItem("refresh");
     try {
-      await fetch(`${process.env.REACT_APP_API_SERVER}/api/auth/logout/`, {
+      await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/logout/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

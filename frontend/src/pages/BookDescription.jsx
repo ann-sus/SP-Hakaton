@@ -12,7 +12,7 @@ const BookDescription = () => {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_SERVER}/api/books/${id}/`);
+        const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/books/${id}/`);
         if (!response.ok) {
           throw new Error("Не вдалося отримати дані книги");
         }
