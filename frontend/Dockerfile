@@ -10,4 +10,4 @@ RUN npm install -g vite
 
 COPY . .
 
-CMD ["npm", "run", "dev"],
+CMD ["npm", "run", "dev"]
