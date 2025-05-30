@@ -42,7 +42,6 @@ class ScrapeBooksView(APIView):
         return all_books
 
 
-
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
