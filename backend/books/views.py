@@ -10,14 +10,34 @@ from .permissions import IsAdminOrReadOnly
 import requests
 from bs4 import BeautifulSoup
 
+
+
+
 class ScrapeBooksView(APIView):
     def get(self, request):
         page_count = int(request.query_params.get('pages', 1))
         if page_count < 1 or page_count > 10:
             return Response({"error": "Pages must be between 1 and 10"}, status=400)
 
-        books = scrape_all_books(page_count)  #ВИКЛИК
-        return Response({"count": len(books), "books": books})
+        scraped_books = scrape_all_books(page_count)
+        created_count = 0
+
+        for data in scraped_books:
+            # Уникаємо дублювання за назвою (можна замінити на іншу перевірку)
+            if not Book.objects.filter(title=data["title"]).exists():
+                Book.objects.create(
+                    title=data["title"],
+                    author="Unknown",  # бо з сайту не скрапиться автор
+                    genre=data["genre"],
+                    year=0,  # якщо немає року — ставимо 0 або None
+                    description=data["description"]
+                )
+                created_count += 1
+
+        return Response({
+            "message": f"{created_count} books added to the database.",
+            "total_scraped": len(scraped_books)
+        }, status=status.HTTP_201_CREATED)
 
     def scrape_books(self, max_pages):
         BASE_URL = "https://books.toscrape.com/catalogue/page-{}.html"
