@@ -4,15 +4,30 @@ import "./style.css";
 function ResetForm() {
   const [email, setEmail] = useState("");
   const [sent, setSent] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
     if (!email.includes("@")) {
-      alert("Введіть коректний e-mail!");
+      setError("Введіть коректний e-mail!");
       return;
     }
-    setSent(true);
-    // Тут можна додати запит до API для скидання паролю
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/auth/password/reset/", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setSent(true);
+      } else {
+        setError(data.error || "Не вдалося надіслати інструкцію");
+      }
+    } catch (e) {
+      setError("Помилка з'єднання з сервером");
+    }
   };
 
   return (
@@ -43,6 +58,9 @@ function ResetForm() {
       >
         Повернутись до входу
       </button>
+      {error && (
+        <div style={{ color: 'red', textAlign: 'center', marginTop: 16 }}>{error}</div>
+      )}
       {sent && (
         <div style={{ color: '#90ee90', textAlign: 'center', marginTop: 16 }}>
           Інструкція для скидання паролю відправлена на: <b>{email}</b>

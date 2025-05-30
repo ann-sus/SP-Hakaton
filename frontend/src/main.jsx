@@ -10,6 +10,8 @@ import WelcomePage from "./pages/WelcomePage";
 import MyBooksPage from "./pages/MyBooksPage";
 import BookDescription from "./pages/BookDescription";
 import AdminPage from "./pages/AdminPage";
+import NotFoundPage from "./pages/NotFoundPage";
+import PasswordResetConfirmPage from "./pages/PasswordResetConfirmPage";
 
 import "./global.css"
 import LibraryHub from "./components/LibraryHub";
@@ -32,7 +34,8 @@ root.render(
         <Route path="/books" element={<MyBooksPage />} />
         <Route path="/books/:id" element={<BookDescription />} />
         <Route path="/admin" element={<AdminPage />} />
-        
+        <Route path="/reset-password/confirm" element={<PasswordResetConfirmPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
       <Footer />
     </div>

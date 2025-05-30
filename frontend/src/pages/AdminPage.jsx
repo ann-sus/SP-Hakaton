@@ -1,23 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-const initialBooks = [
-  {
-    id: 1,
-    title: "Book Title 1",
-    author: "Author 1",
-    summary: "Short summary 1...",
-    genres: ["Fiction", "Adventure"],
-    coverUrl: "https://via.placeholder.com/160x220?text=Book+1"
-  },
-  {
-    id: 2,
-    title: "Book Title 2",
-    author: "Author 2",
-    summary: "Short summary 2...",
-    genres: ["Non-fiction"],
-    coverUrl: "https://via.placeholder.com/160x220?text=Book+2"
-  }
-];
+const initialBooks = [];
 
 function AdminPage() {
   const [books, setBooks] = useState(initialBooks);
@@ -30,48 +13,104 @@ function AdminPage() {
     coverUrl: ""
   });
   const [editMode, setEditMode] = useState(false);
+  const [error, setError] = useState("");
+
+  // --- API URL ---
+  const API_URL = "http://127.0.0.1:8000/api/books/";
+
+  // --- Fetch books on mount ---
+  useEffect(() => {
+    fetch(API_URL)
+      .then(res => res.json())
+      .then(data => setBooks(data))
+      .catch(() => setError("Не вдалося завантажити книги"));
+  }, []);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleAdd = e => {
+  // --- Add book ---
+  const handleAdd = async e => {
     e.preventDefault();
+    setError("");
     if (!form.title || !form.author) return;
-    setBooks([
-      ...books,
-      {
-        ...form,
-        id: Date.now(),
-        genres: form.genres.split(",").map(g => g.trim())
+    try {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          genres: form.genres.split(",").map(g => g.trim())
+        })
+      });
+      if (response.ok) {
+        const newBook = await response.json();
+        setBooks([...books, newBook]);
+        setForm({ id: null, title: "", author: "", summary: "", genres: "", coverUrl: "" });
+      } else {
+        setError("Не вдалося додати книгу");
       }
-    ]);
-    setForm({ id: null, title: "", author: "", summary: "", genres: "", coverUrl: "" });
+    } catch {
+      setError("Помилка з'єднання з сервером");
+    }
   };
 
+  // --- Edit book ---
   const handleEdit = book => {
     setEditMode(true);
     setForm({ ...book, genres: book.genres.join(", ") });
   };
 
-  const handleUpdate = e => {
+  // --- Update book ---
+  const handleUpdate = async e => {
     e.preventDefault();
-    setBooks(books.map(b => b.id === form.id ? { ...form, genres: form.genres.split(",").map(g => g.trim()) } : b));
-    setEditMode(false);
-    setForm({ id: null, title: "", author: "", summary: "", genres: "", coverUrl: "" });
+    setError("");
+    try {
+      const response = await fetch(`${API_URL}${form.id}/`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          genres: form.genres.split(",").map(g => g.trim())
+        })
+      });
+      if (response.ok) {
+        const updatedBook = await response.json();
+        setBooks(books.map(b => b.id === form.id ? updatedBook : b));
+        setEditMode(false);
+        setForm({ id: null, title: "", author: "", summary: "", genres: "", coverUrl: "" });
+      } else {
+        setError("Не вдалося оновити книгу");
+      }
+    } catch {
+      setError("Помилка з'єднання з сервером");
+    }
   };
 
-  const handleDelete = id => {
-    setBooks(books.filter(b => b.id !== id));
-    if (editMode && form.id === id) {
-      setEditMode(false);
-      setForm({ id: null, title: "", author: "", summary: "", genres: "", coverUrl: "" });
+  // --- Delete book ---
+  const handleDelete = async id => {
+    setError("");
+    try {
+      const response = await fetch(`${API_URL}${id}/`, { method: "DELETE" });
+      if (response.ok) {
+        setBooks(books.filter(b => b.id !== id));
+        if (editMode && form.id === id) {
+          setEditMode(false);
+          setForm({ id: null, title: "", author: "", summary: "", genres: "", coverUrl: "" });
+        }
+      } else {
+        setError("Не вдалося видалити книгу");
+      }
+    } catch {
+      setError("Помилка з'єднання з сервером");
     }
   };
 
   return (
     <div style={{ maxWidth: 900, margin: "40px auto", marginTop: "200px", background: "#fff", borderRadius: 18, boxShadow: "0 4px 32px rgba(0,0,0,0.10)", padding: 36 }}>
       <h1 style={{ textAlign: "center", marginBottom: 32 }}>Адмін-панель: Книги</h1>
+      {error && <div style={{ color: 'red', textAlign: 'center', marginBottom: 16 }}>{error}</div>}
       <form onSubmit={editMode ? handleUpdate : handleAdd} style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 32 }}>
         <input name="title" value={form.title} onChange={handleChange} placeholder="Назва" style={{ flex: 1, minWidth: 120, padding: 8 }} required />
         <input name="author" value={form.author} onChange={handleChange} placeholder="Автор" style={{ flex: 1, minWidth: 120, padding: 8 }} required />
@@ -97,7 +136,7 @@ function AdminPage() {
             <tr key={book.id}>
               <td style={{ padding: 8, border: "1px solid #e0e0e0" }}>{book.title}</td>
               <td style={{ padding: 8, border: "1px solid #e0e0e0" }}>{book.author}</td>
-              <td style={{ padding: 8, border: "1px solid #e0e0e0" }}>{book.genres.join(", ")}</td>
+              <td style={{ padding: 8, border: "1px solid #e0e0e0" }}>{Array.isArray(book.genres) ? book.genres.join(", ") : book.genres}</td>
               <td style={{ padding: 8, border: "1px solid #e0e0e0", maxWidth: 200, whiteSpace: "pre-line", overflow: "hidden", textOverflow: "ellipsis" }}>{book.summary}</td>
               <td style={{ padding: 8, border: "1px solid #e0e0e0" }}>
                 {book.coverUrl && <img src={book.coverUrl} alt="cover" style={{ width: 40, height: 55, objectFit: "cover", borderRadius: 4 }} />}
