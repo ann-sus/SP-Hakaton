@@ -25,17 +25,10 @@ class ScrapeBooksView(APIView):
         for data in books:
             # Уникаємо дублювання по title
             if not Book.objects.filter(title=data["title"]).exists():
-                try:
-                    price = float(data["price"])
-                except ValueError:
-                    price = 0.0
-
                 Book.objects.create(
                     title=data["title"],
-                    price=price,
-                    availability=data.get("availability", ""),
                     genre=data.get("genre", ""),
-                    publication_year=None  # в тебе немає року в парсингу, тому None
+                    description=data.get("description", ""),
                 )
                 created_count += 1
 
