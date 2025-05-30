@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { refreshAccessToken } from "../utils/tokenRefresh";
 
 const initialBooks = [];
 
@@ -28,25 +29,29 @@ function AdminPage() {
 
   useEffect(() => {
     const checkAdmin = async () => {
-      const access = localStorage.getItem("access");
+      let access = localStorage.getItem("access");
       if (!access) {
         setError("Доступ заборонено");
         return;
       }
-      try {
-        const res = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
-          headers: { "Authorization": `Bearer ${access}` }
-        });
-        if (res.ok) {
-          const data = await res.json();
-          console.log(data);
-          if (!data.is_staff) {
-            setError("Доступ лише для адміністратора");
-          }
-        } else {
-          setError("Доступ заборонено");
+      // Спроба отримати профіль, якщо access прострочений — оновити токен
+      let res = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
+        headers: { "Authorization": `Bearer ${access}` }
+      });
+      if (res.status === 401) {
+        access = await refreshAccessToken();
+        if (access) {
+          res = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
+            headers: { "Authorization": `Bearer ${access}` }
+          });
         }
-      } catch {
+      }
+      if (res && res.ok) {
+        const data = await res.json();
+        if (!data.is_staff) {
+          setError("Доступ лише для адміністратора");
+        }
+      } else {
         setError("Доступ заборонено");
       }
     };
