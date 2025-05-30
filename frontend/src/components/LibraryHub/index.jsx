@@ -76,12 +76,12 @@ function LibraryHub() {
           isAuth ? (
             <>
               {isAdmin && (
-                <button className="sign-in-button" style={{ marginRight: 12 }} onClick={() => navigate("/admin")}>Адмін-панель</button>
+                <button className="sign-in-button" onClick={() => navigate("/admin")}>Адмін-панель</button>
               )}
               <Link to="/profile" className="sign-in-button" style={{ textDecoration: "none", display: "block", textAlign: "center", lineHeight: "52px" }}>
                 Profile
               </Link>
-              <button className="sign-in-button" style={{ marginLeft: 12 }} onClick={handleLogout}>
+              <button className="sign-in-button" onClick={handleLogout}>
                 Logout
               </button>
             </>
