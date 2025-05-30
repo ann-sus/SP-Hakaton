@@ -12,6 +12,11 @@ from django.utils.encoding import force_bytes, force_str
 from rest_framework import status
 from django.contrib.auth.password_validation import validate_password
 from rest_framework import generics, permissions
+from rest_framework import viewsets
+from .serializers import AdminUserSerializer
+from django.contrib.auth import get_user_model
+from rest_framework.permissions import IsAuthenticated
+from .permissions import IsAdminUser
 
 User = get_user_model()
 
@@ -119,3 +124,10 @@ class ChangePasswordView(generics.UpdateAPIView):
         user.set_password(new_password)
         user.save()
         return Response({"detail": "Пароль успішно змінено."}, status=status.HTTP_200_OK)
+    
+
+
+class AdminUserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = AdminUserSerializer
+    permission_classes = [IsAuthenticated, IsAdminUser]

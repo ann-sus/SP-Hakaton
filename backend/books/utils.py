@@ -10,7 +10,6 @@ def get_book_details(book_url):
         return {}
 
     soup = BeautifulSoup(response.text, 'html.parser')
-
     description_tag = soup.select_one("#product_description ~ p")
     description = description_tag.text.strip() if description_tag else "No description"
 
@@ -33,23 +32,18 @@ def get_books_from_page(page_num):
 
     for book in soup.select("article.product_pod"):
         title = book.h3.a['title']
-        price = book.select_one("p.price_color").text.strip().replace('£', '')
+        price = book.select_one("p.price_color").text.strip().replace('\u00a3', '').replace('£', '')
         availability = book.select_one("p.instock.availability").text.strip()
-
-        rating_class = book.p.get("class", [])
-        rating = next((cls for cls in rating_class if cls != "star-rating"), "No rating")
 
         relative_url = book.h3.a['href']
         book_url = BOOK_URL_PREFIX + relative_url.replace('../../../', '')
 
-        # Отримуємо деталі з окремої сторінки книги
         details = get_book_details(book_url)
 
         books.append({
             "title": title,
             "price": price,
             "availability": availability,
-            "rating": rating,
             "genre": details.get("genre", "Unknown"),
             "description": details.get("description", "No description"),
         })
