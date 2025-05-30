@@ -1,10 +1,7 @@
-
 import React from "react";
 import ProfileInfo from "../components/ProfileInfo";
 import ChangePasswordForm from "../components/ChangePasswordForm";
-
-
-
+import { fetchWithAuth } from "../utils/fetchWithAuth";
 
 import { useEffect, useState } from "react";
 
@@ -16,7 +13,7 @@ function ProfilePage() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("access");
-        const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
+        const response = await fetchWithAuth(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }

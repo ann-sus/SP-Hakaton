@@ -28,8 +28,44 @@
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 12px;
   padding-top: 0;
   padding-right: 0;
   padding-left: 0;
+}
+
+/* Уніфікований стиль для кнопок верхньої панелі */
+.sign-in-button {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 108px;
+  height: 44px;
+  padding: 0 22px;
+  font: 700 16px Inter, sans-serif;
+  color: #fff;
+  background: #171717;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.10);
+  cursor: pointer;
+  transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s;
+  outline: none;
+  margin: 0;
+}
+.sign-in-button:hover, .sign-in-button:focus {
+  background: #fff;
+  color: #171717;
+  border-color: #171717;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+
+/* Для посилань-кнопок */
+.sign-in-button:link, .sign-in-button:visited {
+  text-decoration: none;
+  color: #fff;
+}
+.sign-in-button:hover, .sign-in-button:active {
+  text-decoration: none;
 }

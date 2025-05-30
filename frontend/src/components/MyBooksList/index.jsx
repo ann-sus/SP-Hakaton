@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
-
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 import { useEffect, useState } from "react";
 
@@ -19,7 +19,7 @@ function MyBooksList() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/books/`);
+        const response = await fetchWithAuth(`${import.meta.env.VITE_API_SERVER}/api/books/`);
         if (!response.ok) {
           throw new Error("Не вдалося отримати список книг");
         }

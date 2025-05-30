@@ -2,6 +2,7 @@ import AuthPanel from "../AuthPanel";
 import "./style.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 function LibraryHub() {
   const location = useLocation();
@@ -23,7 +24,7 @@ function LibraryHub() {
         return;
       }
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
+        const res = await fetchWithAuth(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
           headers: { "Authorization": `Bearer ${access}` }
         });
         if (res.ok) {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { refreshAccessToken } from "../utils/tokenRefresh";
+import { fetchWithAuth } from "../utils/fetchWithAuth";
 
 const initialBooks = [];
 
@@ -21,7 +22,7 @@ function AdminPage() {
 
   // --- Fetch books on mount ---
   useEffect(() => {
-    fetch(API_URL)
+    fetchWithAuth(API_URL)
       .then(res => res.json())
       .then(data => setBooks(data))
       .catch(() => setError("Не вдалося завантажити книги"));
@@ -34,18 +35,9 @@ function AdminPage() {
         setError("Доступ заборонено");
         return;
       }
-      // Спроба отримати профіль, якщо access прострочений — оновити токен
-      let res = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
+      let res = await fetchWithAuth(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
         headers: { "Authorization": `Bearer ${access}` }
       });
-      if (res.status === 401) {
-        access = await refreshAccessToken();
-        if (access) {
-          res = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
-            headers: { "Authorization": `Bearer ${access}` }
-          });
-        }
-      }
       if (res && res.ok) {
         const data = await res.json();
         if (!data.is_staff) {
@@ -68,7 +60,7 @@ function AdminPage() {
     setError("");
     if (!form.title || !form.author) return;
     try {
-      const response = await fetch(API_URL, {
+      const response = await fetchWithAuth(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -99,7 +91,7 @@ function AdminPage() {
     e.preventDefault();
     setError("");
     try {
-      const response = await fetch(`${API_URL}${form.id}/`, {
+      const response = await fetchWithAuth(`${API_URL}${form.id}/`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -124,7 +116,7 @@ function AdminPage() {
   const handleDelete = async id => {
     setError("");
     try {
-      const response = await fetch(`${API_URL}${id}/`, { method: "DELETE" });
+      const response = await fetchWithAuth(`${API_URL}${id}/`, { method: "DELETE" });
       if (response.ok) {
         setBooks(books.filter(b => b.id !== id));
         if (editMode && form.id === id) {
