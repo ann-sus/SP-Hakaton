@@ -23,7 +23,7 @@ function PasswordResetConfirmPage() {
       return;
     }
     try {
-      const response = await fetch(`http://127.0.0.1:8000/api/auth/password/reset/confirm/?uid=${uid}&token=${token}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/password/reset/confirm/?uid=${uid}&token=${token}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ new_password: password })

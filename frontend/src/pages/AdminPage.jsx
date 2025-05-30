@@ -16,7 +16,7 @@ function AdminPage() {
   const [error, setError] = useState("");
 
   // --- API URL ---
-  const API_URL = "http://127.0.0.1:8000/api/books/";
+  const API_URL = `${import.meta.env.VITE_API_SERVER}/api/books/`;
 
   // --- Fetch books on mount ---
   useEffect(() => {
