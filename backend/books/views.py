@@ -19,25 +19,31 @@ class ScrapeBooksView(APIView):
         if page_count < 1 or page_count > 10:
             return Response({"error": "Pages must be between 1 and 10"}, status=400)
 
-        scraped_books = scrape_all_books(page_count)
+        books = scrape_all_books(page_count)
         created_count = 0
 
-        for data in scraped_books:
-            # Уникаємо дублювання за назвою (можна замінити на іншу перевірку)
+        for data in books:
+            # Уникаємо дублювання по title
             if not Book.objects.filter(title=data["title"]).exists():
+                try:
+                    price = float(data["price"])
+                except ValueError:
+                    price = 0.0
+
                 Book.objects.create(
                     title=data["title"],
-                    author="Unknown",  # бо з сайту не скрапиться автор
-                    genre=data["genre"],
-                    year=0,  # якщо немає року — ставимо 0 або None
-                    description=data["description"]
+                    price=price,
+                    availability=data.get("availability", ""),
+                    genre=data.get("genre", ""),
+                    publication_year=None  # в тебе немає року в парсингу, тому None
                 )
                 created_count += 1
 
         return Response({
             "message": f"{created_count} books added to the database.",
-            "total_scraped": len(scraped_books)
+            "total_scraped": len(books)
         }, status=status.HTTP_201_CREATED)
+
 
     def scrape_books(self, max_pages):
         BASE_URL = "https://books.toscrape.com/catalogue/page-{}.html"

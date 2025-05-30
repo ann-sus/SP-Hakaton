@@ -10,7 +10,7 @@
   justify-content: space-between;
   width: 100%;
   margin: 0;
-  padding: 32px 48px 32px 48px;
+  padding: 24px 16px 24px 24px; /* зменшено паддінги для економії місця */
   background: #000000;
   border-radius: 0 0 24px 24px;
   box-shadow: 0 4px 24px rgb(0, 0, 0);
@@ -18,21 +18,24 @@
 .header-title {
   box-sizing: border-box;
   flex: 0 0 auto;
-  width: 80.93%;
+  width: auto;
+  max-width: 60vw;
   padding: 0;
   margin: 0;
-  font: 800 48px Inter, sans-serif;
+  font: 800 36px Inter, sans-serif; /* зменшено розмір шрифту */
   color: white;
 }
 .auth-controls-container {
   box-sizing: border-box;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px; /* зменшено відстань між кнопками */
   padding-top: 0;
   padding-right: 0;
   padding-left: 0;
-  justify-content: flex-start;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  max-width: 340px;
 }
 
 /* Уніфікований стиль для кнопок верхньої панелі */
@@ -41,10 +44,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 108px;
-  height: 44px;
-  padding: 0 22px;
-  font: 700 16px Inter, sans-serif;
+  min-width: 90px;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 15px;
   color: #fff;
   background: #171717;
   border: 2px solid #fff;

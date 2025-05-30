@@ -145,7 +145,6 @@ function AdminPage() {
       if (response.ok) {
         const data = await response.json();
         setParseMsg(data.message || "Книги спарсено!");
-        // Оновити список книг після парсингу
         const booksRes = await fetchWithAuth(API_URL);
         if (booksRes.ok) {
           const booksData = await booksRes.json();
