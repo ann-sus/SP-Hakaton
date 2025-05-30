@@ -7,6 +7,8 @@ from rest_framework.viewsets import ModelViewSet
 from .models import Book
 from .serializers import BookSerializer
 from .permissions import IsAdminOrReadOnly
+import requests
+from bs4 import BeautifulSoup
 
 class ScrapeBooksView(APIView):
     def get(self, request):
