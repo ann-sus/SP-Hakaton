@@ -139,7 +139,7 @@ function AdminPage() {
     setError("");
     try {
       const response = await fetchWithAuth(`${import.meta.env.VITE_API_SERVER}/api/books/scrape/`, {
-        method: "POST",
+        method: "GET",
         headers: { "Content-Type": "application/json" }
       });
       if (response.ok) {
