@@ -7,10 +7,10 @@ function AuthPanel() {
   return (
     <div className="auth-controls-container1">
       <Button className="sign-in-button" onClick={() => navigate("/login")}>
-        Sign in
+        Увійти
       </Button>
       <Button className="signup-button" onClick={() => navigate("/signup")}>
-        Sign up
+        Рєстрація
       </Button>
     </div>
   );
