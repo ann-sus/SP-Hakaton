@@ -52,9 +52,8 @@ function MyBooksList() {
               <div className="my-book-cover" style={{ backgroundImage: `url(/assets/book1.jpg)` }} />
               <div className="my-book-info">
                 <div className="my-book-title">{book.title}</div>
-                <div className="my-book-author">{book.author || book.genre}</div>
-                <div className="my-book-year">{book.publication_year}</div>
-                <div className="my-book-price">{book.price} грн</div>
+                <div className="my-book-author">{book.author}</div>
+                <div className="my-book-genre">{book.genre}</div>
               </div>
             </div>
           ))}
