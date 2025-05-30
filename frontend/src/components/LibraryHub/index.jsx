@@ -8,11 +8,36 @@ function LibraryHub() {
   const navigate = useNavigate();
   const hideAuth = location.pathname === "/";
   const [isAuth, setIsAuth] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const auth = localStorage.getItem("isAuth") === "true";
     setIsAuth(auth);
   }, [location]);
+
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const access = localStorage.getItem("access");
+      if (!access) {
+        setIsAdmin(false);
+        return;
+      }
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
+          headers: { "Authorization": `Bearer ${access}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setIsAdmin(!!data.is_staff);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch {
+        setIsAdmin(false);
+      }
+    };
+    checkAdmin();
+  }, [isAuth]);
 
   const handleLogout = async () => {
     const access = localStorage.getItem("access");
@@ -49,6 +74,9 @@ function LibraryHub() {
         {!hideAuth && (
           isAuth ? (
             <>
+              {isAdmin && (
+                <button className="sign-in-button" style={{ marginRight: 12 }} onClick={() => navigate("/admin")}>Адмін-панель</button>
+              )}
               <Link to="/profile" className="sign-in-button" style={{ textDecoration: "none", display: "block", textAlign: "center", lineHeight: "52px" }}>
                 Profile
               </Link>

@@ -24,7 +24,7 @@ function MyBooksList() {
           throw new Error("Не вдалося отримати список книг");
         }
         const data = await response.json();
-        setBooks(data);
+        setBooks(Array.isArray(data) ? data : []);
       } catch (err) {
         setError(err.message || "Сталася помилка");
       } finally {

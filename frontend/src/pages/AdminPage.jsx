@@ -26,6 +26,33 @@ function AdminPage() {
       .catch(() => setError("Не вдалося завантажити книги"));
   }, []);
 
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const access = localStorage.getItem("access");
+      if (!access) {
+        setError("Доступ заборонено");
+        return;
+      }
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
+          headers: { "Authorization": `Bearer ${access}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          console.log(data);
+          if (!data.is_staff) {
+            setError("Доступ лише для адміністратора");
+          }
+        } else {
+          setError("Доступ заборонено");
+        }
+      } catch {
+        setError("Доступ заборонено");
+      }
+    };
+    checkAdmin();
+  }, []);
+  
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -106,6 +133,10 @@ function AdminPage() {
       setError("Помилка з'єднання з сервером");
     }
   };
+
+  if (error) {
+    return <div style={{ maxWidth: 600, margin: '200px auto', background: '#fff', borderRadius: 18, boxShadow: '0 4px 32px rgba(0,0,0,0.10)', padding: 36, textAlign: 'center', color: 'red', fontSize: 22 }}>{error}</div>;
+  }
 
   return (
     <div style={{ maxWidth: 900, margin: "40px auto", marginTop: "200px", background: "#fff", borderRadius: 18, boxShadow: "0 4px 32px rgba(0,0,0,0.10)", padding: 36 }}>
