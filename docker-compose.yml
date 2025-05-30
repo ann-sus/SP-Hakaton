@@ -18,6 +18,7 @@ services:
       - "${BACKEND_PORT}"
     volumes:
       - ./backups:/app/backups
+      - ./backend:/app/backend
 
   frontend:
     build:
