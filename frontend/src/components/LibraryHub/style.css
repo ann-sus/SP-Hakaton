@@ -45,6 +45,7 @@
   align-items: center;
   justify-content: center;
   min-width: 90px;
+  max-width: 120px;
   height: 38px;
   padding: 0 12px;
   font-size: 15px;
@@ -57,6 +58,9 @@
   transition: background 0.18s, color 0.18s, border 0.18s, box-shadow 0.18s;
   outline: none;
   margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .sign-in-button:hover, .sign-in-button:focus {
   background: #fff;
