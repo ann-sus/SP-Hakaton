@@ -16,7 +16,7 @@ function ProfilePage() {
     const fetchProfile = async () => {
       try {
         const token = localStorage.getItem("access");
-        const response = await fetch("http://127.0.0.1:8000/api/auth/profile/", {
+        const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
           headers: {
             "Authorization": `Bearer ${token}`
           }

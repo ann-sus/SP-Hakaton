@@ -27,6 +27,8 @@ services:
       - backend
     expose:
       - "${FRONTEND_PORT}"
+    environment:
+      - VITE_API_SERVER=${VITE_API_SERVER}
 
   nginx:
     image: nginx:alpine
