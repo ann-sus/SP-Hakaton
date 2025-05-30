@@ -5,9 +5,7 @@ import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 import { useEffect, useState } from "react";
 
-const genres = [
-  "Fiction", "Fantasy", "Romance", "Mystery", "History"
-];
+
 
 
 function MyBooksList() {
@@ -33,6 +31,9 @@ function MyBooksList() {
     };
     fetchBooks();
   }, []);
+
+  // Витягуємо унікальні жанри з книг
+  const uniqueGenres = Array.from(new Set(books.map(book => book.genre).filter(Boolean)));
 
   return (
     <div className="my-books-container">
@@ -62,9 +63,13 @@ function MyBooksList() {
       <div className="my-genres-section">
         <h3 className="my-genres-title">Жанри</h3>
         <div className="my-genres-list">
-          {genres.map((genre, idx) => (
-            <div className="my-genre-chip" key={idx}>{genre}</div>
-          ))}
+          {uniqueGenres.length === 0 ? (
+            <div className="my-genre-chip">Жанрів не знайдено</div>
+          ) : (
+            uniqueGenres.map((genre, idx) => (
+              <div className="my-genre-chip" key={idx}>{genre}</div>
+            ))
+          )}
         </div>
       </div>
     </div>
