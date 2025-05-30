@@ -1,0 +1,148 @@
+openapi: 3.0.0
+info:
+  title: API Documentation
+  version: '1.0'
+  description: API для роботи з авторизацією, книгами та адмінкою
+
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/a-d7a/Hakaton/1.0
+  - url: http://localhost:3000/api
+
+paths:
+  /auth/login/:
+    post:
+      summary: Логін (отримання JWT токенів)
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Успішний логін, токени повернуті
+        '401':
+          description: Невірний логін або пароль
+
+  /auth/:
+    get:
+      summary: Отримати інформацію про авторизацію
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Успішно
+    post:
+      summary: Реєстрація або оновлення токенів
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Успішно
+
+  /books/:
+    get:
+      summary: Список книг
+      tags:
+        - Books
+      responses:
+        '200':
+          description: Повертає список книг
+
+  /books/export/excel/:
+    get:
+      summary: Завантаження книг у форматі Excel з фільтрами
+      tags:
+        - Books
+      responses:
+        '200':
+          description: Excel-файл із книгами
+
+  /books/{id}/:
+    get:
+      summary: Деталі книги
+      tags:
+        - Books
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Деталі книги
+    put:
+      summary: Повне оновлення книги
+      tags:
+        - Books
+      security:
+        - AdminAuth: []
+      responses:
+        '200':
+          description: Книгу оновлено
+    patch:
+      summary: Часткове оновлення книги
+      tags:
+        - Books
+      security:
+        - AdminAuth: []
+      responses:
+        '200':
+          description: Книгу оновлено
+    delete:
+      summary: Видалити книгу
+      tags:
+        - Books
+      security:
+        - AdminAuth: []
+      responses:
+        '204':
+          description: Видалено
+
+  /books/scrape/:
+    post:
+      summary: Парсинг книг із зовнішнього сайту
+      tags:
+        - Books
+      security:
+        - AdminAuth: []
+      responses:
+        '201':
+          description: Дані спарсено та збережено
+
+  /admin/:
+    get:
+      summary: Панель адміністратора
+      tags:
+        - Admin
+      security:
+        - AdminAuth: []
+      responses:
+        '200':
+          description: Адмінка
+
+  /:
+    get:
+      summary: Головна сторінка
+      tags:
+        - Public
+      responses:
+        '200':
+          description: Головна сторінка
+
+components:
+  securitySchemes:
+    AdminAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
