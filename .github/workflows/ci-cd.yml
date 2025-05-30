@@ -3,7 +3,6 @@ name: CI/CD Django
 on:
   push:
     branches:
-      - ci-cd
       - main
   pull_request:
 
@@ -12,7 +11,7 @@ env:
   SSH_USER: ${{ secrets.SSH_USER }}
   SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
   CONTAINER_NAME: sp-hakaton-backend-1
-  BRANCH: ci-cd
+  BRANCH: main
   PROJECT_DIR: /home/ubuntu/hakaton/SP-Hakaton
   WORK_DIR: /app
 
@@ -66,7 +65,7 @@ jobs:
     name: Deploy
     runs-on: ubuntu-latest
     needs: [lint-python, lint-js]
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ci-cd'
+    if: github.ref == 'refs/heads/main' 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
