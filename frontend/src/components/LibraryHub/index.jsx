@@ -2,23 +2,49 @@ import AuthPanel from "../AuthPanel";
 import "./style.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 function LibraryHub() {
   const location = useLocation();
   const navigate = useNavigate();
   const hideAuth = location.pathname === "/";
   const [isAuth, setIsAuth] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
     const auth = localStorage.getItem("isAuth") === "true";
     setIsAuth(auth);
   }, [location]);
 
+  useEffect(() => {
+    const checkAdmin = async () => {
+      const access = localStorage.getItem("access");
+      if (!access) {
+        setIsAdmin(false);
+        return;
+      }
+      try {
+        const res = await fetchWithAuth(`${import.meta.env.VITE_API_SERVER}/api/auth/profile/`, {
+          headers: { "Authorization": `Bearer ${access}` }
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setIsAdmin(!!data.is_staff);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch {
+        setIsAdmin(false);
+      }
+    };
+    checkAdmin();
+  }, [isAuth]);
+
   const handleLogout = async () => {
     const access = localStorage.getItem("access");
     const refresh = localStorage.getItem("refresh");
     try {
-      await fetch("http://127.0.0.1:8000/api/auth/logout/", {
+      await fetch(`${import.meta.env.VITE_API_SERVER}/api/auth/logout/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,11 +75,14 @@ function LibraryHub() {
         {!hideAuth && (
           isAuth ? (
             <>
+              {isAdmin && (
+                <button className="sign-in-button" onClick={() => navigate("/admin")}>Адмін</button>
+              )}
               <Link to="/profile" className="sign-in-button" style={{ textDecoration: "none", display: "block", textAlign: "center", lineHeight: "52px" }}>
-                Profile
+                Профіль
               </Link>
-              <button className="sign-in-button" style={{ marginLeft: 12 }} onClick={handleLogout}>
-                Logout
+              <button className="sign-in-button" onClick={handleLogout}>
+                Вийти
               </button>
             </>
           ) : (

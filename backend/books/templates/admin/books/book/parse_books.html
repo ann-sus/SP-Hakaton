@@ -1,0 +1,12 @@
+{% extends "admin/base_site.html" %}
+{% load i18n admin_urls static %}
+
+{% block content %}
+  <h1>{{ title }}</h1>
+  <form method="post" style="margin-top: 20px;">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="default">Запустити парсинг</button>
+    <a href="{% url 'admin:books_book_changelist' %}">Назад до списку книг</a>
+  </form>
+{% endblock %}

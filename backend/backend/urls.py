@@ -20,10 +20,10 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    #path('admin/', admin.site.urls),
     path('api/auth/', include('users.urls')),  # все auth зібрано тут
     path('', include('home.urls')),  # Нова головна сторінка з додатку home
     path('api/books/', include('books.urls')),
-
+    path('api/admin/', include('users.admin_urls')),
 ]
 

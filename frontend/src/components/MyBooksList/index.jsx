@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./style.css";
-
+import { fetchWithAuth } from "../../utils/fetchWithAuth";
 
 import { useEffect, useState } from "react";
 
@@ -19,12 +19,12 @@ function MyBooksList() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/books/");
+        const response = await fetchWithAuth(`${import.meta.env.VITE_API_SERVER}/api/books/`);
         if (!response.ok) {
           throw new Error("Не вдалося отримати список книг");
         }
         const data = await response.json();
-        setBooks(data);
+        setBooks(Array.isArray(data) ? data : []);
       } catch (err) {
         setError(err.message || "Сталася помилка");
       } finally {
