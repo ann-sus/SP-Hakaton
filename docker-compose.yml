@@ -27,7 +27,9 @@ services:
       - backend
     expose:
       - "${FRONTEND_PORT}"
-
+    environment:
+      - REACT_APP_API_SERVER=${REACT_APP_API_SERVER}
+      
   nginx:
     image: nginx:alpine
     ports:
