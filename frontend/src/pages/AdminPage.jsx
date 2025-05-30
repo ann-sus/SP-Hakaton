@@ -16,9 +16,11 @@ function AdminPage() {
   });
   const [editMode, setEditMode] = useState(false);
   const [error, setError] = useState("");
+  const [parsing, setParsing] = useState(false);
+  const [parseMsg, setParseMsg] = useState("");
 
   // --- API URL ---
-  const API_URL = `${import.meta.env.VITE_API_SERVER}/api/books/`;
+  const API_URL = `${import.meta.env.VITE_API_SERVER}/api/books/admin-api/books/`;
 
   // --- Fetch books on mount ---
   useEffect(() => {
@@ -131,6 +133,34 @@ function AdminPage() {
     }
   };
 
+  const handleParseBooks = async () => {
+    setParsing(true);
+    setParseMsg("");
+    setError("");
+    try {
+      const response = await fetchWithAuth(`${import.meta.env.VITE_API_SERVER}/api/books/scrape/`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" }
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setParseMsg(data.message || "Книги спарсено!");
+        // Оновити список книг після парсингу
+        const booksRes = await fetchWithAuth(API_URL);
+        if (booksRes.ok) {
+          const booksData = await booksRes.json();
+          setBooks(booksData);
+        }
+      } else {
+        setParseMsg("Не вдалося спарсити книги");
+      }
+    } catch {
+      setParseMsg("Помилка з'єднання з сервером");
+    } finally {
+      setParsing(false);
+    }
+  };
+
   if (error) {
     return <div style={{ maxWidth: 600, margin: '200px auto', background: '#fff', borderRadius: 18, boxShadow: '0 4px 32px rgba(0,0,0,0.10)', padding: 36, textAlign: 'center', color: 'red', fontSize: 22 }}>{error}</div>;
   }
@@ -139,6 +169,25 @@ function AdminPage() {
     <div style={{ maxWidth: 900, margin: "40px auto", marginTop: "200px", background: "#fff", borderRadius: 18, boxShadow: "0 4px 32px rgba(0,0,0,0.10)", padding: 36 }}>
       <h1 style={{ textAlign: "center", marginBottom: 32 }}>Адмін-панель: Книги</h1>
       {error && <div style={{ color: 'red', textAlign: 'center', marginBottom: 16 }}>{error}</div>}
+      <button
+        onClick={handleParseBooks}
+        disabled={parsing}
+        style={{
+          marginBottom: 24,
+          padding: "10px 32px",
+          background: parsing ? "#aaa" : "#1976d2",
+          color: "#fff",
+          border: "none",
+          borderRadius: 8,
+          fontWeight: 700,
+          fontSize: 16,
+          cursor: parsing ? "not-allowed" : "pointer",
+          transition: "background 0.2s"
+        }}
+      >
+        {parsing ? "Парсинг..." : "Спарсити книги з books.toscrape.com"}
+      </button>
+      {parseMsg && <div style={{ color: '#1976d2', textAlign: 'center', marginBottom: 16 }}>{parseMsg}</div>}
       <form onSubmit={editMode ? handleUpdate : handleAdd} style={{ display: "flex", gap: 16, flexWrap: "wrap", marginBottom: 32 }}>
         <input name="title" value={form.title} onChange={handleChange} placeholder="Назва" style={{ flex: 1, minWidth: 120, padding: 8 }} required />
         <input name="author" value={form.author} onChange={handleChange} placeholder="Автор" style={{ flex: 1, minWidth: 120, padding: 8 }} required />
