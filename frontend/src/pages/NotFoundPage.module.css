@@ -1,0 +1,49 @@
+/* NotFoundPage styles (404) */
+.notfound-outer {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+.notfound-box {
+  background: #000;
+  border-radius: 16px;
+  padding: 48px 32px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.15);
+  max-width: 480px;
+  text-align: center;
+  margin-top: 200px;
+  margin-bottom: 100px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.notfound-title {
+  color: #d32f2f;
+  font-size: 80px;
+  margin-bottom: 0;
+  font-weight: 800;
+}
+.notfound-desc {
+  color: #fff;
+  font-size: 22px;
+  margin-bottom: 32px;
+  margin-top: 18px;
+}
+.notfound-link {
+  background: #fff;
+  color: #171717;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 18px;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  margin-top: 18px;
+}
+.notfound-link:hover {
+  background: #1976d2;
+  color: #fff;
+}

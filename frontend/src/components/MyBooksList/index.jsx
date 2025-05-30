@@ -19,7 +19,7 @@ function MyBooksList() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:8000/api/books/");
+        const response = await fetch(`${import.meta.env.VITE_API_SERVER}/api/books/`);
         if (!response.ok) {
           throw new Error("Не вдалося отримати список книг");
         }
