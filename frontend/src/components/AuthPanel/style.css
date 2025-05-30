@@ -2,9 +2,10 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  gap: 48px;
+  gap: 16px;
   align-items: center;
   justify-content: flex-end;
+  flex-wrap: wrap;
 }
 .sign-in-text-styles {
   flex: 0 0 auto;
