@@ -20,7 +20,7 @@ function AdminPage() {
   const [parseMsg, setParseMsg] = useState("");
 
   // --- API URL ---
-  const API_URL = `${import.meta.env.VITE_API_SERVER}/api/books/admin-api/books/`;
+  const API_URL = `${import.meta.env.VITE_API_SERVER}/api/books/`;
 
   // --- Fetch books on mount ---
   useEffect(() => {
