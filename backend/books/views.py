@@ -1,12 +1,17 @@
+# books/views.py
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from .utils import scrape_all_books  #ІМПОРТ
-# books/views.py
 from rest_framework.viewsets import ModelViewSet
 from .models import Book
 from .serializers import BookSerializer
 from .permissions import IsAdminOrReadOnly
+import openpyxl
+from django.http import HttpResponse
+from django.db.models import Q
+from rest_framework.decorators import action
+from django.contrib.auth.decorators import login_required
 
 class ScrapeBooksView(APIView):
     def get(self, request):
@@ -40,9 +45,56 @@ class ScrapeBooksView(APIView):
                 })
 
         return all_books
-
+    
 
 class BookViewSet(ModelViewSet):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
     permission_classes = [IsAdminOrReadOnly]
+
+    @action(detail=False, methods=['get'], url_path='export/excel')
+    @login_required
+    def export_books_excel(self, request):
+        genre = request.GET.get('genre')
+        title = request.GET.get('title')
+        price = request.GET.get('price')
+        availability = request.GET.get('availability')
+        year_from = request.GET.get('year_from')
+        year_to = request.GET.get('year_to')
+
+        books = self.queryset
+
+        if genre:
+            books = books.filter(genre__icontains=genre)
+        if title:
+            books = books.filter(title__icontains=title)
+        if price:
+            books = books.filter(price__icontains=price)
+        if availability:
+            books = books.filter(availability_icontains=availability)
+        if year_from:
+            books = books.filter(publication_year__gte=year_from)
+        if year_to: 
+            books = books.filter(publication_year__lte=year_to)
+
+
+        wb = openpyxl.Workbook()
+        ws = wb.active
+        ws.title = "Books"
+        ws.append(["Title", "Genre", "Price", "Publication Year", "Availability"])
+
+        for book in books:
+            ws.append([
+                book.title,
+                book.genre,
+                book.price,
+                book.publication_year,
+                book.description,
+            ])
+
+        response = HttpResponse(
+            content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        )
+        response['Content-Disposition'] = 'attachment; filename=books.xlsx'
+        wb.save(response)
+        return response
